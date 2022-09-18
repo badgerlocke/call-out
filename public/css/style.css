@@ -1,6 +1,31 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 body {
-    background-color: #3f594e;
-    color: white;
+    /* background-color: #3f594e; */
+    /* color: white; */
+    height: 100vh;
+}
+body::before{
+    content:"";
+    background-image: url("../bkg/pexels-jacob-colvin-1761279.jpg");
+    opacity:0.5;
+    background-size: cover;
+    background-repeat: no-repeat;
+    position: absolute;
+    top:0;
+    bottom:0;
+    right:0;
+    left:0;
+    width:auto;
+    height:auto;
+    z-index:-3;
+  }
+div.background {
+    background-image: url("../bkg/pexels-jacob-colvin-1761279.jpg");
+    opacity: 0.5;
+    height: 100vh;
 }
 
 div.rounded {
@@ -24,6 +49,7 @@ input {
     max-height: 70vh;
 }
 
-.disabled {
+/* .disabled {
     background-color: grey !important;
-}
+} */
+
