@@ -12,6 +12,8 @@ const UserSchema = new mongoose.Schema({
   phoneNumber: { type: Number },
   location: { type: String },
   bio: { type: String },
+  age: { type: Number },
+  identifyingFeatures: { type: String },
   profilePic: { type: String, required: false },
   cloudinaryId: { type: String, required: false },
   medicalNeeds: { type: Array, default: [] },

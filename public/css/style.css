@@ -1,5 +1,5 @@
 body {
-    background-color: #333;
+    background-color: #3f594e;
     color: white;
 }
 
@@ -22,4 +22,8 @@ input {
 .img-fluid {
     max-width: 50vw;
     max-height: 70vh;
+}
+
+.disabled {
+    background-color: grey !important;
 }

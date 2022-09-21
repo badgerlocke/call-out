@@ -12,9 +12,14 @@
                         <div class="alert alert-info"><%= el.msg %></div>
                     <% }) %>    
                 <% } %>
+                <div class="mb-3">
+                    <label for="realName" class="form-label">Your name</label>
+                    <input type="text" class="form-control" id="realName" aria-describedby="real-name" name="realName">
+                    <div id="real-name" class="form-text">The first and last name you go by</div>
+                </div>
                 <form action="/signup" method="POST">
                     <div class="mb-3">
-                        <label for="userName" class="form-label">User Name</label>
+                        <label for="userName" class="form-label">Username</label>
                         <input type="text" class="form-control" id="userName" name="userName">
                     </div>
                     <!-- TODO - uncomment when code is implemented to handle profile pics -->
@@ -35,7 +40,68 @@
                     <div class="mb-3">
                         <label for="confirmPassword" class="form-label">Confirm Password</label>
                         <input type="password" class="form-control" id="confirmPassword" name="confirmPassword">
-                      </div>
+                    </div>
+
+                    <h4>Optional information</h4>
+                    <div class="mb-3">
+                        <label for="age" class="form-label">Age</label>
+                        <input type="number" class="form-control" id="age" name="age">
+                    </div>
+                    <div class="mb-3">
+                        <label for="profilePic" class="form-label">Profile picture</label>
+                        <input type="file" class="form-control" id="profilePic" aria-describedby="pic" name="profilePic">
+                        <div id="pic" class="form-text">Please provide a recent picture of yourself. Aside from serving as your profile picture, this can help identify you if a search is ever necessary.</div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="location" class="form-label">Location</label>
+                        <input type="text" class="form-control" id="location" name="location">
+                        <div id="bio-desc" class="form-text">Zip code or city, state (optional)</div>
+                        <!-- Todo: allow zip code or city, state lookup -->
+                    </div>
+                    <div class="mb-3">
+                        <label for="bio" class="form-label">Bio</label>
+                        <input type="textbox" class="form-control" id="bio" aria-describedby="bio-desc" name="bio">
+                        <div id="bio-desc" class="form-text">Tell us a bit about yourself (optional)</div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="phoneNumber" class="form-label">Phone number</label>
+                        <input type="tel" class="form-control" id="phoneNumber" aria-describedby="phone" name="phoneNumber">
+                        <div id="phone" class="form-text"></div>
+                    </div>
+                    <h4>Emergency contact</h4>
+                    <div class="mb-3">
+                        <label for="contactName" class="form-label">Emergency contact name</label>
+                        <input type="text" class="form-control" id="contactName" name="contactName">
+                    </div>
+                    <div class="mb-3">
+                        <label for="contactEmail" class="form-label">Emergency contact email</label>
+                        <input type="email" class="form-control" id="contactEmail" name="contactEmail">
+                    </div>
+                    <div class="mb-3">
+                        <label for="contactPhone" class="form-label">Emergency phone number</label>
+                        <input type="tel" class="form-control" id="contactPhone" name="contactPhone">
+                    </div>
+                    <p>These fields are optional and will only be shared with search and rescue teams if you ever need to be rescued.</p>
+                    <p> NOTE: Disabled while in development.</p>
+
+                    <div class="mb-3">
+                        <label for="xx" class="form-label">Do you have any identifying features?</label>
+                        <input type="" class="form-control disabled" id="xx" aria-describedby="yy" name="xx" disabled>
+                        <div id="yy" class="form-text">Example: Scar on lower leg, tattoo of a smurf on your left shoulder</div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="medicalNeeds" class="form-label">Medical needs</label>
+                        <input type="text" class="form-control disabled" id="medicalNeeds" aria-describedby="medical" name="medicalNeeds" disabled>
+                        <div id="medical" class="form-text">Some conditions are helpful for emergency services to be aware of. Ex. diabetes.</div>
+                    </div>
+                    <!-- TEMPLATE -->
+                    <!-- <div class="mb-3">
+                        
+                        <label for="xx" class="form-label">Email address</label>
+                        <input type="" class="form-control" id="xx" aria-describedby="yy" name="">
+                        <div id="yy" class="form-text">Additional message</div>
+                    </div> -->
                     <button type="submit" class="btn btn-primary">Submit</button>
                   </form>
             </section>
