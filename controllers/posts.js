@@ -15,7 +15,31 @@ module.exports = {
   getFeed: async (req, res) => {
     try {
       const posts = await Post.find().sort({ createdAt: "desc" }).lean();
-      res.render("feed.ejs", { posts: posts });
+      res.render("feed.ejs", { posts: posts, user: req.user });
+    } catch (err) {
+      console.log(err);
+    }
+  },
+  getMyTrips: async (req, res) => {
+    try {
+      const posts = await Post.find({ user: req.user.id });
+      res.render("mytrips.ejs", { posts: posts, user: req.user });
+    } catch (err) {
+      console.log(err);
+    }
+  },
+  getNewTrip: async (req, res) => {
+    try {
+      const posts = await Post.find({ user: req.user.id });
+      res.render("newtrip.ejs", { posts: posts, user: req.user });
+    } catch (err) {
+      console.log(err);
+    }
+  },
+  getTemplate: async (req, res) => {
+    try {
+      const posts = await Post.find().sort({ createdAt: "desc" }).lean();
+      res.render("template.ejs", { posts: posts });
     } catch (err) {
       console.log(err);
     }

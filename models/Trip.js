@@ -1,21 +1,19 @@
 const mongoose = require("mongoose");
 
 const TripSchema = new mongoose.Schema({
-  participants: {
-    type: Array,
-    default: []
-  },
-  description: {
-    type: String,
-    required: true,
-  },
-  emergencyContacts: {
-    type: Array,
-    default: []
-  },
   user: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
+  },
+  location: {
+    type: String,
+    required: true,
+  },
+  description: {
+    type: String
+  },
+  tripType: {
+    type: String
   },
   createdAt: {
     type: Date,
@@ -24,7 +22,15 @@ const TripSchema = new mongoose.Schema({
   dueBack: {
     type: Date,
     required: true,
-  }
+  },
+  notifyAt: {
+    type: Date,
+    required: true,
+  },
+  participants: {
+    type: Array,
+    default: []
+  },
 });
 
 module.exports = mongoose.model("Trip", TripSchema);
