@@ -10,14 +10,15 @@ const UserSchema = new mongoose.Schema({
   email: { type: String, unique: true },
   password: String,
   phoneNumber: { type: Number },
+  profilePic: { type: String, required: false },
+  cloudinaryId: { type: String, required: false },
   location: { type: String },
   bio: { type: String },
   age: { type: Number },
   identifyingFeatures: { type: String },
-  profilePic: { type: String, required: false },
-  cloudinaryId: { type: String, required: false },
   medicalNeeds: { type: Array, default: [] },
-  emergencyContacts: { type: Array, default: [] }
+  emergencyContacts: { type: Array, default: [] },
+  numTrips: { type: Number, default: 0},
 });
 
 // Password hash middleware.

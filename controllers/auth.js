@@ -93,10 +93,18 @@ exports.postSignup = async (req, res, next) => {
   //Create new user
   const user = new User({
     userName: req.body.userName,
+    realName: req.body.realName,
     email: req.body.email,
     password: req.body.password,
-    image: 131,
-    cloudinaryID: 111
+    phoneNumber: req.body.phoneNumber,
+    profilePic: 131,
+    cloudinaryID: 111,
+    location: req.body.location,
+    bio: req.body.bio,
+    age: req.body.age,
+    identifyingFeatures: req.body.identifyingFeatures,
+    medicalNeeds: req.body.medicalNeeds,
+    emergencyContacts: req.body.emergencyContacts,
   });
   //Check if there's already an account with this email or username
   User.findOne(
