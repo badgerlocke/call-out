@@ -9,7 +9,7 @@ const TripSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  description: {
+  details: {
     type: String
   },
   tripType: {
@@ -19,18 +19,24 @@ const TripSchema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
-  dueBack: {
+  returnTime: {
     type: Date,
     required: true,
   },
-  notifyAt: {
-    type: Date,
-    required: true,
+  notifyTime: {
+    type: Date
   },
-  participants: {
-    type: Array,
-    default: []
+  notify: {
+    type: Boolean,
   },
+  checkedIn: {
+    type: Boolean,
+    default: false
+  },
+  // participants: {
+  //   type: Array,
+  //   default: []
+  // },
 });
 
 module.exports = mongoose.model("Trip", TripSchema);
