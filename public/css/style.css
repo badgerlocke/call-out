@@ -9,7 +9,7 @@ body {
 }
 body::before{
     content:"";
-    background-image: url("../bkg/pexels-jacob-colvin-1761279.jpg");
+    /* background-image: url("../bkg/pexels-jacob-colvin-1761279.jpg"); */
     opacity:0.5;
     background-size: cover;
     background-repeat: no-repeat;
@@ -22,11 +22,11 @@ body::before{
     height:auto;
     z-index:-3;
   }
-div.background {
+/* body.background {
     background-image: url("../bkg/pexels-jacob-colvin-1761279.jpg");
     opacity: 0.5;
     height: 100vh;
-}
+} */
 
 div.rounded {
     width: 100%;
@@ -53,3 +53,11 @@ input {
     background-color: grey !important;
 } */
 
+h1 a {
+    font-size: 40px;
+}
+
+.container {
+    margin: 50px;
+    background-color: transparent;
+}
