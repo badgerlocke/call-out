@@ -1,54 +1,35 @@
-<%- include('partials/header') -%>
+<%- include('partials/newheader') -%>
 <div class="container">
   <div class="row mt-5">
       <div class="col-6">
-          <div>
+          <div id="user-greeting">
               <p><strong>Welcome back </strong> <%= user.realName %>!</p>
-              <!-- <p><strong>Email</strong>: <%= user.email %></p> -->
               <!-- <p><strong>Number of trips you've been on:</strong>: <%= user.trips %></p> -->
-              <%  console.log(user) %>
               <a href="/logout" class="col-3 btn btn-primary">Logout</a>
           </div>
           <div class="mt-5">
-            <h2>Add a trip</h2>
-            <form action="/trips/createTrip" enctype="multipart/form-data" method="POST">
-              <div class="mb-3">
-                  <label for="title" class="form-label">Trip name</label>
-                  <input type="text" class="form-control" id="title" name="title">
-              </div>
-              <div class="mb-3">
-                <label for="description" class="form-label">Description</label>
-                <textarea class="form-control" id="description" name="description"></textarea>
-              </div>
-              <div class="mb-3">
-                <label for="imgUpload" class="form-label">Image</label>
-                <input type="file" class="form-control" id="imageUpload" name="file">
-              </div>
-              <button type="submit" class="btn btn-primary" value="Upload">Submit</button>
-            </form>
+            <h2>My Trips</h2>
+              <h5>You've been on <%=trips.length%> trips</h5>
+            <a href="/trips/newtrip" class="col-3 btn btn-primary">Create a new trip</a>
           </div>
       </div>
-      <div class="col-6">
+      <div class="">
         <ul class="row list-unstyled">
-
+        <% console.log(trips) %>
         </ul>
-        <div class="row justify-content-center mt-5">
-          <a class="btn btn-primary" href="/feed">Return to Feed</a>
-        </div>  
+        <% for(var i=0; i<trips.length; i++) {%>
+          <li class="trip-item justify-content-between">
+            <h3><%= trips[i].tripType %> trip to <%= trips[i].location %></h3>
+            <p>Details: <%= trips[i].details %></p>
+            <span>Started at <%=trips[i].createdAt%> and expected to return at <%=trips[i].returnTime%></span>
+          </li>
+        <% } %>
       </div>  
     </div>
   </div>
 </div>
-<script src="js/preview.js"></script>
+
 <!-- TODO: move and integrate with template -->
-<div id="imagesDiv" class="rounded">
-  <label for="chooseFiles">Add Images</label>
-  <input type="file" id="chooseFiles" multiple="multiple" />
-  <table id="previewTable">
-      <thead id="columns"></thead>
-      <tbody id="previews"></tbody>
-  </table>
-</div>
 <div id="app"></div>
 <!-- TEST -->
 <!-- Load preview of image using jQuery -->
