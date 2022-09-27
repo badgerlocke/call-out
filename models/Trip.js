@@ -33,6 +33,9 @@ const TripSchema = new mongoose.Schema({
     type: Boolean,
     default: false
   },
+  checkInTime: {
+    type: Date
+  }
   // participants: {
   //   type: Array,
   //   default: []

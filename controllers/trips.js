@@ -30,8 +30,8 @@ module.exports = {
   },
   getNewTrip: async (req, res) => {
     try {
-      const trips = await Trip.find({ user: req.user.id });
-      res.render("newtrip.ejs", { trips: trips, user: req.user });
+      // const trips = await Trip.find({ user: req.user.id });
+      res.render("newtrip.ejs");
     } catch (err) {
       console.log(err);
     }
@@ -54,7 +54,7 @@ module.exports = {
     }
   },
   addPic: async (req, res) => {
-      // For reuse - adding pics to trip or user profile
+      // TODO - add pics to trip or user profile
       // Upload image to cloudinary
       // const result = await cloudinary.uploader.upload(req.file.path);
               // image: result.secure_url,
@@ -123,6 +123,9 @@ module.exports = {
     } catch (err) {
       console.log(err);
     }
+  },
+  checkIn: async (req, res) => {
+
   },
   deleteTrip: async (req, res) => {
     try {

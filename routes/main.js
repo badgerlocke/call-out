@@ -15,7 +15,7 @@ router.get("/logout", authController.logout);
 router.get("/signup", authController.getSignup);
 router.get("/template", tripsController.getTemplate);
 router.get("/mytrips", tripsController.getMyTrips);
-router.get("/newtrip", tripsController.getNewTrip);
+
 router.post("/signup", authController.postSignup);
 
 module.exports = router;
