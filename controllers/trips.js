@@ -7,6 +7,13 @@ module.exports = {
   getProfile: async (req, res) => {
     try {
       const trips = await Trip.find({ user: req.user.id });
+      const isAfterToday = (date) => {
+        const today = new Date();
+        return date > today;
+      }
+      for (let i=0; i< trips.length; i++) {
+        console.log(`Is ${trips[i].returnTime} after today? ${isAfterToday(trips[i].returnTime)}`)
+      }
       res.render("profile.ejs", { trips: trips, user: req.user });
     } catch (err) {
       console.log(err);
@@ -23,6 +30,14 @@ module.exports = {
   getMyTrips: async (req, res) => {
     try {
       const trips = await Trip.find({ user: req.user.id });
+      const isAfterToday = (date) => {
+        const today = new Date();
+        return date > today;
+      }
+      for (let i=0; i< trips.length; i++) {
+        console.log(`Is ${trips[i].returnTime} after today? ${isAfterToday(trips[i].returnTime)}`)
+      }
+
       res.render("mytrips.ejs", { trips: trips, user: req.user });
     } catch (err) {
       console.log(err);

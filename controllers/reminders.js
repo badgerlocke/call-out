@@ -10,12 +10,25 @@ function sendDailyReminders() {
     let reminderTime = process.env.DAILY_REMINDER_TIME || 0
     let cronStr = `0 ${reminderTime} * * *`
     //cronStr = `* * * * *`  //FOR TESTING: Uncomment and this will try to send a text every minute.
-    console.log('Reminder cron scheduled')
+    // console.log('Cron scheduled')
     cron.schedule(cronStr, () => {
         console.log('Reminders.....GO!')
         getReminders()
       });
 }
+
+
+    const isAfterToday = (date) => {
+        const today = new Date();
+      
+
+      
+        return date > today;
+      }
+
+
+
+
 sendDailyReminders()
 
 //Get list of users who have reminders enabled
