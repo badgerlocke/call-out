@@ -3,9 +3,13 @@ module.exports = {
   content: ["./views/*.ejs",
           "./views/partials/*.ejs"],
   theme: {
-    extend: {},
+    extend: {
+      backgroundImage: {
+        'thisdoesntwork': "url('./public/bkg/pexels-jacob-colvin-1761279.jpg')"
+      }
+    },
   },
-  plugins: [require("daisyui")],
+  plugins: [require('@tailwindcss/typography'),require("daisyui")],
 
   // daisyUI config (optional)
   daisyui: {

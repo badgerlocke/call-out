@@ -2,14 +2,10 @@
 @tailwind components;
 @tailwind utilities;
 
-body {
-    /* background-color: #3f594e; */
-    /* color: white; */
-    height: 100vh;
-}
-body::before{
+
+/* body::before{
     content:"";
-    /* background-image: url("../bkg/pexels-jacob-colvin-1761279.jpg"); */
+    background-image: url("../bkg/pexels-jacob-colvin-1761279.jpg");
     opacity:0.5;
     background-size: cover;
     background-repeat: no-repeat;
@@ -21,43 +17,28 @@ body::before{
     width:auto;
     height:auto;
     z-index:-3;
-  }
+  } */
 /* body.background {
     background-image: url("../bkg/pexels-jacob-colvin-1761279.jpg");
     opacity: 0.5;
-    height: 100vh;
+
 } */
 
-div.rounded {
-    width: 100%;
-    border-style: solid;
-    border-width: 1px;
-    border-radius: 5px;
-}
+
 label {
     display: block;
 }
 input {
     display: block;
-}
-#previewTable {
-    width: 100%;
-}
+ }
 
-.img-fluid {
-    max-width: 50vw;
-    max-height: 70vh;
-}
 
 /* .disabled {
     background-color: grey !important;
 } */
 
-h1 a {
-    font-size: 40px;
+li {
+    list-style: none;
 }
 
-.container {
-    margin: 50px;
-    background-color: transparent;
-}
+
