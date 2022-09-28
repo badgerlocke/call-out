@@ -1,16 +1,16 @@
 <%- include('partials/newheader') -%>
 <div class="container">
-  <div class="row mt-5">
-      <div class="col-6">
+  <div class="">
+      <div class="">
           <div id="user-greeting">
               <p><strong>Welcome back </strong> <%= user.realName %>!</p>
               <!-- <p><strong>Number of trips you've been on:</strong>: <%= user.trips %></p> -->
-              <a href="/logout" class="col-3 btn btn-primary">Logout</a>
+              <a href="/logout" class="btn btn-primary">Logout</a>
           </div>
-          <div class="mt-5">
+          <div class="">
             <h2>My Trips</h2>
               <h5>You've been on <%=trips.length%> trips</h5>
-            <a href="/trips/newtrip" class="col-3 btn btn-primary">Create a new trip</a>
+            <a href="/trips/newtrip" class="btn btn-primary">Create a new trip</a>
           </div>
       </div>
       <div class="">
@@ -18,7 +18,7 @@
         <% console.log(trips) %>
         </ul>
         <% for(var i=0; i<trips.length; i++) {%>
-          <li class="trip-item justify-content-between">
+          <li class="trip-item ">
             <h3><%= trips[i].tripType %> trip to <%= trips[i].location %></h3>
             <p>Details: <%= trips[i].details %></p>
             <span>Started at <%=trips[i].createdAt%> and expected to return at <%=trips[i].returnTime%></span>
