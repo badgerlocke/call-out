@@ -1,0 +1,78 @@
+<%- include('partials/newheader') -%>
+<main class="m-8">
+<div class="container prose">
+  <div>
+      <div class="">
+        <!-- TODO: Make this a brief alert when user logs in. -->
+          <!-- <div id="user-greeting">
+              <p><span class="">Welcome back </span> <%= user.realName %>!</p>
+              <p><strong>Number of trips you've been on :<strong> <%= trips.length %></p>
+              <a href="/logout" class="btn btn-primary">Logout</a>
+          </div> -->
+          <div class="">
+            <h2>My Trips</h2>
+              <h5>You've been on <%=trips.length%> trips</h5>
+            <a href="/trips/newtrip" class="btn btn-primary">Create a new trip</a>
+          </div>
+      </div>
+      <article class="prose">
+
+        <h1>Garlic bread with cheese: What the science tells us</h1>
+        <p>For years parents have espoused the health benefits of eating garlic bread with cheese to their children, with the food earning such an iconic status in our culture that kids will often dress up as warm, cheesy loaf for Halloween.</p>
+        <p>But a recent study shows that the celebrated appetizer may be linked to a series of rabies cases springing up around the country.</p>
+        <!-- ... -->
+      </article>
+
+      <div class="">
+        <ul class="row list-unstyled">
+  
+        
+          <% for(var i=0; i<trips.length; i++) {%>
+            <li class="trip-item lg:prose-xl">
+              <div class="card w-150 bg-base-100 shadow-xl">
+  <!-- <figure><img src="https://placeimg.com/400/225/arch" alt="Shoes" /></figure> -->
+            <div class="card-body ">
+              <h2 class="card-title">
+                <%= trips[i].tripType %> trip to <%= trips[i].location %>
+                <% if (!trips[i].checkedIn) {%>
+                <div class="badge badge-secondary">ACTIVE</div>
+                <%}%>
+              </h2>
+              <span>Started at <%=String(trips[i].createdAt).slice(4,21)%> and expected to return at <%=String(trips[i].returnTime).slice(4,21)%></span>
+              <p>Details: <%= trips[i].details %></p>
+
+              <!-- <p>If a dog chews shoes whose shoes does he choose?</p> -->
+              <div class="card-actions justify-end">
+                <div class="badge badge-outline"><%= trips[i].tripType %></div> 
+              </div>
+            </div>
+          </div>
+          </li>
+        <% } %>
+      </ul>
+      </div>  
+    </div>
+  </div>
+</main>
+
+<!-- TODO: move and integrate with template -->
+<div id="app"></div>
+<!-- TEST -->
+<!-- Load preview of image using jQuery -->
+<!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script>    function readURL(input) {
+  if (input.files && input.files[0]) {
+      var reader = new FileReader();
+      
+      reader.onload = function (e) {
+          $('#blah').attr('src', e.target.result);
+      }
+      
+      reader.readAsDataURL(input.files[0]);
+  }
+}
+
+$("#imgInp").change(function(){
+  readURL(this);
+});</script> -->
+<%- include('partials/footer') -%>

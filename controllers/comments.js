@@ -39,7 +39,7 @@ module.exports = {
       console.log("Deleted comment");
       res.redirect("/post/" + comment.post);
     } catch (err) {
-      res.redirect("/profile");
+      res.redirect("/home");
     }
   },
 };

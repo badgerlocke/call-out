@@ -4,6 +4,21 @@ const Comment = require("../models/Comment");
 const User = require("../models/User")
 
 module.exports = {
+  getHome: async (req, res) => {
+    try {
+      const trips = await Trip.find({ user: req.user.id });
+      const isAfterToday = (date) => {
+        const today = new Date();
+        return date > today;
+      }
+      for (let i=0; i< trips.length; i++) {
+        console.log(`Is ${trips[i].returnTime} after today? ${isAfterToday(trips[i].returnTime)}`)
+      }
+      res.render("home.ejs", { trips: trips, user: req.user });
+    } catch (err) {
+      console.log(err);
+    }
+  },
   getProfile: async (req, res) => {
     try {
       const trips = await Trip.find({ user: req.user.id });
@@ -88,10 +103,10 @@ module.exports = {
         notify: Boolean(req.body.notify),
       });
       console.log("Trip has been added!");
-      res.redirect("/profile");
+      res.redirect("/home");
     } catch (err) {
       console.log(err);
-      res.redirect("/profile")
+      res.redirect("/home")
     }
   },
   likeTrip: async (req, res) => {
@@ -151,9 +166,9 @@ module.exports = {
       // Delete trip from db
       await Trip.remove({ _id: req.params.id });
       console.log("Deleted Trip");
-      res.redirect("/profile");
+      res.redirect("/home");
     } catch (err) {
-      res.redirect("/profile");
+      res.redirect("/home");
     }
   },
 };
