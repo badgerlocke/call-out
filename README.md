@@ -1,20 +1,6 @@
 # About
 
-A social media app where users can share pics of cats, gain points, and blast off into the cat dimension
-
-Work in progress! Currently building the social media side.
-Todo:
-  Front end:
-  - Improve layout
-  Comments:
-  - Allow editing of comments
-  - Allow liking of comments
-  Upvotes:
-  - Track upvotes by user - disallow multiple upvotes, allow unliking
-
-
-  Stretch goals:
-  - Add photo recognition to automatically remove images that don't contain cats
+Call Out is a web application to improve the safety of outdoor enthusiasts. The term "call out" comes from the caving community, where cavers contact others once they've returned to the surface. The call out time is at least several hours, if not more, after their expected return time. Caves are unpredictable and dangerous. A group that misses their call out time is likely to need to be rescued. This app is aimed at automating the process by messaging your emergency contacts if you don't checkin by your call out time. It can be used for any activity: backpacking, hiking, caving, travelling, etc.
 
 # Install
 
