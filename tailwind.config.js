@@ -5,7 +5,9 @@ module.exports = {
   theme: {
     extend: {
       backgroundImage: {
-        'thisdoesntwork': "url('./public/bkg/pexels-jacob-colvin-1761279.jpg')"
+        'bridge-lg': "url('../bkg/bridge-lg.png')",
+        'bridge-md': "url('../bkg/bridge-md.png')",
+        'bridge-sm': "url('../bkg/bridge-sm.png')"
       }
     },
   },
