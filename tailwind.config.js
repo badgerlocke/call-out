@@ -3,6 +3,9 @@ module.exports = {
   content: ["./views/*.ejs",
           "./views/partials/*.ejs"],
   theme: {
+    container: {
+      center: true,
+    },
     extend: {
       backgroundImage: {
         'bridge-lg': "url('../bkg/bridge-lg.png')",

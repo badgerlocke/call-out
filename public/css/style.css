@@ -2,10 +2,9 @@
 @tailwind components;
 @tailwind utilities;
 
-
+/* Set transparent background image without affecting other elements' opacity*/
 .bkg::before{
     content:"";
-    
     opacity:0.5;
     background-size: cover;
     background-repeat: no-repeat;
