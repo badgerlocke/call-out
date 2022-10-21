@@ -155,7 +155,26 @@ module.exports = {
     }
   },
   checkIn: async (req, res) => {
-
+    try {
+      let trip = await Trip.findById({ _id: req.params.id });
+      if (trip.checkedIn) {
+        //If user has already checked in, yell at them. This check becomes unnecessary if checkin button is only displayed for active trips.
+        console.log("You're already checked in.")
+        res.redirect(`/home`);
+      } else {
+        //Otherwise, check in
+        await Trip.findOneAndUpdate(
+          { _id: req.params.id },
+          {
+            checkedIn: true
+          }
+        );
+        console.log("Checked in");
+        res.redirect(`/home`);
+      }
+    } catch (err) {
+      console.log(err);
+    }
   },
   deleteTrip: async (req, res) => {
     try {

@@ -1,6 +1,6 @@
 <%- include('partials/header') -%>
 <main class="m-8">
-<div class="container prose">
+<div class="container m-8">
   <div>
       <div class="">
         <!-- TODO: Make this a brief alert when user logs in. -->
@@ -17,7 +17,7 @@
       </div>
 
       <div class="">
-        <ul class=" list-unstyled flex flex-wrap w-screen">
+        <ul class=" list-unstyled flex flex-wrap ">
   
         
           <% for(var i=0; i<trips.length; i++) {%>
@@ -35,11 +35,28 @@
               </h2>
               <span>Started at <%=String(trips[i].createdAt).slice(4,21)%> and expected to return at <%=String(trips[i].returnTime).slice(4,21)%></span>
               <p>Details: <%= trips[i].details %></p>
+
+
               <% if (!trips[i].checkedIn) { %>
+                <form
+                action="/trips/checkIn/<%= trips[i].id %>?_method=PUT"
+                method="POST"
+                class="col-3"
+                >
                 <div class="card-actions justify-end">
-                  <button class="btn btn-primary">Check in</button>
+                  <button class="btn btn-primary" type="submit">Check in</button>
                 </div>
+              </form>
               <% } %>
+              <form
+              action="/trip/deleteTrip/<%= trips[i].id %>?_method=DELETE"
+              method="POST"
+              class="col-3"
+              >
+                <button class="btn btn-primary fa fa-trash" type="submit"></button>
+              </form>
+
+
               <div class="card-actions justify-end">
                 <div class="badge badge-outline"><%= trips[i].tripType %></div> 
               </div>
@@ -53,6 +70,7 @@
   </div>
 </main>
 
+<script src="js/main.js"></script>
 <!-- TODO: move and integrate with template -->
 <div id="app"></div>
 <!-- TEST -->

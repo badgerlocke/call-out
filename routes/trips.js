@@ -17,7 +17,7 @@ router.get("/newtrip", ensureAuth, tripsController.getNewTrip);
 router.post("/createTrip", tripsController.createTrip);
 
 router.put("/likeTrip/:id", tripsController.likeTrip);
-router.put("/checkin/:id", tripsController.checkIn)
+router.put("/checkIn/:id", tripsController.checkIn)
 
 router.delete("/deleteTrip/:id", tripsController.deleteTrip);
 

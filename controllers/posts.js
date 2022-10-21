@@ -72,51 +72,6 @@ module.exports = {
       console.log(err);
     }
   },
-  likePost: async (req, res) => {
-    try {
-      let post = await Post.findById({ _id: req.params.id });
-      if (post.likedBy.includes(req.user.id)) {
-        //If user has already liked the post, remove their like
-        console.log('User already liked this')
-        await Post.findOneAndUpdate(
-          { _id: req.params.id },
-          {
-            $inc: { likes: -1 },
-            $pull: { likedBy: req.user.id}
-          }
-        );
-        //Update poster's like count
-        await User.findOneAndUpdate(
-          { _id: post.user },
-          {
-            $inc: { likes: -1 },
-          }
-        );
-        console.log("Likes -1");
-        res.redirect(`/post/${req.params.id}`);
-      } else {
-        //Otherwise, add a like
-        await Post.findOneAndUpdate(
-          { _id: req.params.id },
-          {
-            $inc: { likes: 1 },
-            $addToSet: { likedBy: req.user.id}
-          }
-        );
-        //Update poster's like count
-        await User.findOneAndUpdate(
-         { _id: post.user },
-            {
-              $inc: { likes: 1 },
-            }
-        );
-        console.log("Likes +1");
-        res.redirect(`/post/${req.params.id}`);
-      }
-    } catch (err) {
-      console.log(err);
-    }
-  },
   deletePost: async (req, res) => {
     try {
       // Find post by id
