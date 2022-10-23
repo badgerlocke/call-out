@@ -3,6 +3,9 @@ const Trip = require('../models/Trip')
 const Users = require('../models/User')
 const cron = require('node-cron')
 const { sendSMS } = require('./sms');
+// const { sendEmail } = require('./nodemailer.js')
+
+// sendEmail()
 
 //Runs once per day at DAILY_REMINDER_TIME (UTC)
 //For help changing cronStr: https://cron.help/#0_0_*_*_*
@@ -29,7 +32,7 @@ function sendDailyReminders() {
 
 
 
-sendDailyReminders()
+// sendDailyReminders()
 
 //Get list of users who have reminders enabled
 findUsersWithReminders = async () => {
@@ -80,3 +83,49 @@ sendReminders = async (name,number,tasks) => {
         console.log(error)
     }
 }
+
+"use strict";
+const nodemailer = require("nodemailer");
+
+// async..await is not allowed in global scope, must use a wrapper
+async function main() {
+    const senderEmail = process.env.SENDER_EMAIL
+    const myEmail = "sagehwilliams@proton.me"
+
+  const SMTP_USER = process.env.SENDER_EMAIL
+  const SMTP_PASS = process.env.EMAIL_PW
+  const SMTP_HOST = "gmail.com"
+  const SMTP_PORT = 465
+
+  let transporter = nodemailer.createTransport(
+    { name: SMTP_HOST, // mail.example.com or smtp.mail.com
+    host: SMTP_HOST, // mail.example.com or smtp.mail.com
+    port: SMTP_PORT, // 465
+    secure: true,
+    auth: {
+    user: process.env.SENDER_EMAIL, // username
+    pass: process.env.EMAIL_PW // password
+    },
+    logger: true,
+    debug: true
+    });
+
+  // send mail with defined transport object
+  let info = await transporter.sendMail({
+    from: senderEmail, // sender address
+    to: myEmail, // list of receivers
+    subject: "Hello ✔", // Subject line
+    text: "Hello world?", // plain text body
+    html: "<b>Hello world?</b>", // html body
+  });
+
+  console.log("Message sent: %s", info.messageId);
+  console.log("Message info: ", info);
+  // Message sent: <b658f8ca-6296-ccf4-8306-87d57a0b4321@example.com>
+
+  // Preview only available when sending through an Ethereal account
+  console.log("Preview URL: %s", nodemailer.getTestMessageUrl(info));
+  // Preview URL: https://ethereal.email/message/WaQKMgKddxQDoou...
+}
+
+main().catch(console.error);

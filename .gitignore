@@ -4,3 +4,6 @@ public/bkg
 views/temp
 public/logo
 notes
+googleauth.json
+credentials.json
+token.json
