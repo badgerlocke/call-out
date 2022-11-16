@@ -1,131 +1,121 @@
-//Controlls automated reminders. Sends SMS message once per day to users with due items and reminders enabled.
-const Trip = require('../models/Trip')
+//Monitors for late trips. Sends email and text alerts.
+const Trips = require('../models/Trip')
 const Users = require('../models/User')
 const cron = require('node-cron')
 const { sendSMS } = require('./sms');
-// const { sendEmail } = require('./nodemailer.js')
-
-// sendEmail()
-
-//Runs once per day at DAILY_REMINDER_TIME (UTC)
-//For help changing cronStr: https://cron.help/#0_0_*_*_*
-function sendDailyReminders() {
-    let reminderTime = process.env.DAILY_REMINDER_TIME || 0
-    let cronStr = `0 ${reminderTime} * * *`
-    //cronStr = `* * * * *`  //FOR TESTING: Uncomment and this will try to send a text every minute.
-    // console.log('Cron scheduled')
-    cron.schedule(cronStr, () => {
-        console.log('Reminders.....GO!')
-        getReminders()
-      });
-}
-
-
-    const isAfterToday = (date) => {
-        const today = new Date();
-      
-
-      
-        return date > today;
-      }
-
-
-
-
-// sendDailyReminders()
-
-//Get list of users who have reminders enabled
-findUsersWithReminders = async () => {
-    try {
-        const userList = await Users.find()
-        return userList
-    } catch(err) {
-        console.log(err)
-        return []
-    }
-}
-
-//Get list of tasks due today (or in the past) for a specified user
-findTasksDue = async (user) => {
-    let today = new Date //NOTE: Times are UTC
-    const trips = await Trip.find({userId: user,
-        // dueDate: {$lte: today}
-        checkedIn: false
-    })
-    return trips
-}
-
-//Find tasks due today for all users with reminders enabled, then send them a reminder message
-getReminders = async () => {
-    try {
-        const userList = await findUsersWithReminders()
-        // let tasks = []
-        for (let user in userList) {
-            // tasks[user] = await findTasksDue(usersToRemind[user]._id)
-            let tasks = await findTasksDue(userList[user]._id)
-            if (tasks.length > 0) {
-                sendReminders(userList[user].userName,userList[user].phone,tasks)
-            }  
-        }
-        // return tasks
-    } catch (error) {
-        console.log(error)
-    }
-}
-
-//Send SMS reminder 
-sendReminders = async (name,number,tasks) => {
-    try {
-        let message = `${name}, you have ${tasks.length} tasks to get done today.`
-        console.log(message)
-        sendSMS(number,message)
-    } catch (error) {
-        console.log(error)
-    }
-}
-
-"use strict";
+const process = require('process');
 const nodemailer = require("nodemailer");
 
-// async..await is not allowed in global scope, must use a wrapper
-async function main() {
-    const senderEmail = process.env.SENDER_EMAIL
-    const myEmail = "sagehwilliams@proton.me"
+//Runs once per minute and checks for late users.
+//For help changing cronStr: https://cron.help/#0_0_*_*_*
+// function sendDailyReminders() {
+//     let reminderTime = process.env.DAILY_REMINDER_TIME || 0
+//     let cronStr = `0 ${reminderTime} * * *`
+//     //cronStr = `* * * * *`  //FOR TESTING: Uncomment and this will try to send a text every minute.
+//     // console.log('Cron scheduled')
+//     cron.schedule(cronStr, () => {
+//         console.log('Reminders.....GO!')
+//         getReminders()
+      // });
+// }
 
-  const SMTP_USER = process.env.SENDER_EMAIL
-  const SMTP_PASS = process.env.EMAIL_PW
-  const SMTP_HOST = "gmail.com"
-  const SMTP_PORT = 465
+//TODO: Change to "Check time" or something similar. Maybe store time when server starts, and check every n minutes after?
+// const isAfterToday = (date) => {
+//     const today = new Date(); 
+//     return date > today;
+// }
 
-  let transporter = nodemailer.createTransport(
-    { name: SMTP_HOST, // mail.example.com or smtp.mail.com
-    host: SMTP_HOST, // mail.example.com or smtp.mail.com
-    port: SMTP_PORT, // 465
-    secure: true,
-    auth: {
-    user: process.env.SENDER_EMAIL, // username
-    pass: process.env.EMAIL_PW // password
-    },
-    logger: true,
-    debug: true
-    });
-
+//TODO: Split function into smaller bits. One for sending mail only, one to determine email contents/targets
+async function sendEmail(user) {
+    const transporter = nodemailer.createTransport({
+      service: "Gmail",
+      auth: {
+          user: process.env.EMAIL,
+          pass: process.env.EMAIL_PW
+      }
+  });
   // send mail with defined transport object
   let info = await transporter.sendMail({
-    from: senderEmail, // sender address
+    from: process.env.EMAIL, // sender address
     to: myEmail, // list of receivers
-    subject: "Hello ✔", // Subject line
-    text: "Hello world?", // plain text body
+    subject: "Reminder to check in", // Subject line
+    text: `Please log in to your Call Out account to check in after your trip! We will notify your contacts if you haven't checked in by {}`, // plain text body
     html: "<b>Hello world?</b>", // html body
   });
-
   console.log("Message sent: %s", info.messageId);
-  console.log("Message info: ", info);
-  // Message sent: <b658f8ca-6296-ccf4-8306-87d57a0b4321@example.com>
-
-  // Preview only available when sending through an Ethereal account
-  console.log("Preview URL: %s", nodemailer.getTestMessageUrl(info));
-  // Preview URL: https://ethereal.email/message/WaQKMgKddxQDoou...
 }
 
-main().catch(console.error);
+// DISABLED so it stops spamming me!
+// main().catch(console.error);
+
+
+
+async function main() {
+  //Get trips due back. 
+  //Loop through
+  //Send an email to each
+  let remindTrips = findTripsDue()
+  for (let trip in remindTrips) {
+
+  }
+
+  let lateTrips = await findLate()
+
+  for (let trip in lateTrips) {
+
+  }
+}
+main()
+
+//Find trips that haven't checked in
+async function findLate() {
+  try {
+    const lateTrips = await Trips.find({
+      checkedIn: false,
+      notifyTime: {
+        $lt: new Date()}
+      })
+    // console.log(lateTrips)
+    return lateTrips
+  } catch(err) {
+    console.log(err)
+    return []
+  }
+}
+
+//Find trips that are past their expected return time, but before their call out time.
+async function findTripsDue() {
+  try {
+    const returningSoon = await Trips.find({
+      checkedIn: false,
+      returnTime: {
+        $lte: new Date()},
+      notifyTime: {
+        $gte: new Date()}
+      })
+    console.log(returningSoon)
+    return returningSoon
+  } catch(err) {
+    console.log(err)
+    return []
+  }
+}
+
+async function sendCheckinReminder() {
+  //${user.name}, don't forget to check in when you return from your ${trip.type} trip! Your expected return time was ${trip.returnTime}. 
+  //Eventually, add "Click here to check in" link to the email
+  
+}
+
+async function sendReminder() {
+  //Send user a reminder to check in
+}
+
+async function sendSOS() {
+  //Alert user's contacts if it is past their callout time
+
+}
+
+async function sendEmail(addresses,text) {
+
+}
