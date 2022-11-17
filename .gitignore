@@ -2,6 +2,4 @@ node_modules
 .env
 views/temp
 notes
-googleauth.json
-credentials.json
-token.json
+public/bkg/original
