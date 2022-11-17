@@ -5,6 +5,10 @@ const mongoose = require("mongoose");
 //Optional parameters: Real name, phone number,
 //location, bio, profile pic, special/medical needs
 const UserSchema = new mongoose.Schema({
+  googleId: {
+    type: String,
+    required: false,
+  },
   userName: { type: String, unique: true }, 
   realName: { type: String },
   email: { type: String, unique: true },
