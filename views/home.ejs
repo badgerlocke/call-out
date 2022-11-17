@@ -1,5 +1,5 @@
 <%- include('partials/header') -%>
-<main class="m-8">
+<main class="m-8 bkg bkg-bridge " >
 <div class="container m-8">
   <div>
       <div class="">
@@ -9,9 +9,10 @@
               <p><strong>Number of trips you've been on :<strong> <%= trips.length %></p>
               <a href="/logout" class="btn btn-primary">Logout</a>
           </div> -->
-          <div class="">
-            <h2>My Trips</h2>
-              <h5>You've been on <%=trips.length%> trips</h5>
+          <div class="lg:prose-lg">
+            <h1 >My Trips</h1>
+
+              <!-- <h5>You've been on <%=trips.length%> trips</h5> -->
             <a href="/trips/newtrip" class="btn btn-primary">Create a new trip</a>
           </div>
       </div>
@@ -22,45 +23,44 @@
         
           <% for(var i=0; i<trips.length; i++) {%>
             <li class="trip-item lg:prose-xl m-2">
-              <article class="card w-96 bg-base-200 shadow-xl">
 
-            <div class="card-body grey-600">
-              <h2 class="card-title justify-between">
+                <% if (trips[i].checkedIn) { %>
+                  <article class="card w-96 bg-base-200 shadow-xl">
+              <% } else { %>
+                <article class="card w-96 bg-primary shadow-xl">
+              <% }%>
+              <div class="card-body grey-600"> 
+              <h4 class="card-title justify-between">
                 <%= trips[i].tripType %> trip to <%= trips[i].location %>
-                <% if (!trips[i].checkedIn) {%>
-                <div class="badge badge-secondary">ACTIVE</div>
-                <%} else {%>
-                  <div class="badge badge-primary">Checked in</div>
-                <% } %>
-              </h2>
-              <span>Started at <%=String(trips[i].createdAt).slice(4,21)%> and expected to return at <%=String(trips[i].returnTime).slice(4,21)%></span>
-              <p>Details: <%= trips[i].details %></p>
+                </h4>
+                <div class="card-actions justify-end inline-block">
+                  <div class="badge badge-outline"><%= trips[i].tripType %></div> 
+                </div>
+                <!-- <% if (!trips[i].checkedIn) {%> -->
+                <!-- <div class="badge badge-secondary">ACTIVE</div> -->
+                <!-- <%} else {%> -->
+                  <!-- <div class="badge badge-primary"><i class="fa-solid fa-check"></i></div> -->
+                <!-- <% } %> -->
+              
+              <!-- <span>Started at <%=String(trips[i].createdAt).slice(4,21)%> and expected to return at <%=String(trips[i].returnTime).slice(4,21)%></span> -->
+              <span>Expected return: <%=String(trips[i].returnTime).slice(4,21)%></span>
+              <p class="overflow-scroll">Details: <%= trips[i].details %></p>
 
-
+            <div class="container">
               <% if (!trips[i].checkedIn) { %>
-                <form
-                action="/trips/checkIn/<%= trips[i].id %>?_method=PUT"
-                method="POST"
-                class="col-3"
-                >
-                <div class="card-actions justify-end">
+                <form action="/trips/checkIn/<%= trips[i].id %>?_method=PUT" method="POST" class="col-3">
+                <div class="card-actions">
                   <button class="btn btn-primary" type="submit">Check in</button>
                 </div>
               </form>
               <% } %>
-              <form
-              action="/trip/deleteTrip/<%= trips[i].id %>?_method=DELETE"
-              method="POST"
-              class="col-3"
-              >
-                <button class="btn btn-primary fa fa-trash" type="submit"></button>
+              <form action="/trips/deleteTrip/<%= trips[i].id %>?_method=DELETE" method="POST" class="col-3">
+                <div class="card-actions justify-end">
+                  <button class="btn btn-primary fa fa-trash" type="submit"></button>
+                </div>
               </form>
-
-
-              <div class="card-actions justify-end">
-                <div class="badge badge-outline"><%= trips[i].tripType %></div> 
-              </div>
             </div>
+          </div>
           </article>
           </li>
         <% } %>
