@@ -1,8 +1,6 @@
 node_modules
 .env
-public/bkg
 views/temp
-public/logo
 notes
 googleauth.json
 credentials.json
