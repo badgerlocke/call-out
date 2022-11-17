@@ -8,9 +8,9 @@ module.exports = {
     },
     extend: {
       backgroundImage: {
-        'bridge-lg': "url('../bkg/bridge-lg.png')",
-        'bridge-md': "url('../bkg/bridge-md.png')",
-        'bridge-sm': "url('../bkg/bridge-sm.png')"
+        'bridge-lg': "url('../bkg/vertical/bridge-lg.png')",
+        'bridge-md': "url('../bkg/vertical/bridge-md.png')",
+        'bridge-sm': "url('../bkg/vertical/bridge-sm.png')"
       }
     },
   },

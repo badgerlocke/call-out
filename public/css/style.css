@@ -18,22 +18,86 @@
     z-index:-3;
 }
 /* Serve different bkg images based on device size */
-@media (max-width: 641px) {
-    .bkg::before {
-        background-image: url("../bkg/bridge-sm.png");
-    }
-}
-@media (max-width: 1000px) {
-    .bkg::before {
-        background-image: url("../bkg/bridge-md.png");
-    }
-}
-@media (min-width: 1008px) {
-    .bkg::before {
-        background-image: url("../bkg/bridge-lg.png");
-    }
-}
 
+@media (max-width: 641px) {
+    .bkg-bridge::before {
+      background-image: url("../bkg/vertical/bridge-sm.png");
+    }
+  }
+  
+  @media (max-width: 1000px) {
+    .bkg-bridge::before {
+      background-image: url("../bkg/vertical/bridge-md.png");
+    }
+  }
+  
+  @media (min-width: 1008px) {
+    .bkg-bridge::before {
+      background-image: url("../bkg/vertical/bridge-lg.png");
+    }
+  }
+  @media (max-width: 641px) {
+    .bkg-flame::before {
+      background-image: url("../bkg/vertical/flaming-mist-sm.jpg");
+    }
+  }
+  
+  @media (max-width: 1000px) {
+    .bkg-flame::before {
+      background-image: url("../bkg/vertical/flaming-mist-md.jpg");
+    }
+  }
+  
+  @media (min-width: 1008px) {
+    .bkg-flame::before {
+      background-image: url("../bkg/vertical/flaming-mist-lg.jpg");
+    }
+  }
+  @media (max-width: 641px) {
+    .bkg-forest-mist::before {
+      background-image: url("../bkg/vertical/forest-mist-sm.jpg");
+    }
+  }
+  
+  @media (max-width: 1000px) {
+    .bkg-forest-mist::before {
+      background-image: url("../bkg/vertical/forest-mist-md.jpg");
+    }
+  }
+  
+  @media (min-width: 1008px) {
+    .bkg-forest-mist::before {
+      background-image: url("../bkg/vertical/forest-lake-lg.jpg");
+    }
+  }
+  @media (max-width: 1000px) {
+    .bkg-foggy-lake::before {
+      background-image: url("../bkg/horizontal/foggy-lake-md.jpg");
+    }
+  }
+  
+  @media (min-width: 1008px) {
+    .bkg-foggy-lake::before {
+      background-image: url("../bkg/horizontal/foggy-lake-lg.jpg");
+    }
+  }
+  @media (max-width: 1000px) {
+    .bkg-forest::before {
+      background-image: url("../bkg/horizontal/forest-md.jpg");
+    }
+  }
+  
+  @media (min-width: 1008px) {
+    .bkg-forest::before {
+      background-image: url("../bkg/horizontal/forest-lg.jpg");
+    }
+  }
+
+  @media (max-width: 4008px) {
+    .bkg-sunset::before {
+      background-image: url("../bkg/horizontal/sunset-lg.jpg");
+    }
+  }
 
 
 label {
