@@ -1,0 +1,14 @@
+
+Hope you enjoy your new logo, here are the people that
+made your beautiful logo happen :)
+font name: fibra-light
+font link: https://www.fontspring.com/fonts/los-andes-type/fibra/fibra-light
+font author: Los Andes Type
+font author site: https://losandestype.myportfolio.com/
+
+
+icon designer: Cezary Lopacinski
+icon designer link: /cezarylopacinski
+        
+{"bg":"transparent","icon-gradient-0":"#0A3732","icon-gradient-1":"#55C388","font":"#000000","slogan":"#141414"}
+      
