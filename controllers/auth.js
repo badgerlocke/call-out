@@ -1,7 +1,6 @@
 const passport = require("passport");
 const validator = require("validator");
 const User = require("../models/User");
-const cloudinary = require("../middleware/cloudinary");
 
 exports.getLogin = (req, res) => {
   if (req.user) {
@@ -44,6 +43,10 @@ exports.postLogin = (req, res, next) => {
     });
   })(req, res, next);
 };
+passport.authenticate('google', { scope: ['profile', 'email', 'https://www.googleapis.com/auth/drive', 'https://www.googleapis.com/auth/spreadsheets.readonly'], accessType: 'offline', prompt: 'consent' })
+
+
+
 
 exports.logout = (req, res) => {
   req.logout(() => {
@@ -67,11 +70,6 @@ exports.getSignup = (req, res) => {
 };
 
 exports.postSignup = async (req, res, next) => {
-  // if ()
-  // try { 
-  //         // Upload image to cloudinary
-  //         const result = await cloudinary.uploader.upload(req.file.path);
-  // }
   //Validate user data
   const validationErrors = [];
   if (!validator.isEmail(req.body.email))
@@ -90,23 +88,13 @@ exports.postSignup = async (req, res, next) => {
   req.body.email = validator.normalizeEmail(req.body.email, {
     gmail_remove_dots: false,
   });
-  //Create new user
+
   const user = new User({
     userName: req.body.userName,
-    realName: req.body.realName,
     email: req.body.email,
     password: req.body.password,
-    phoneNumber: req.body.phoneNumber,
-    profilePic: 131,
-    cloudinaryID: 111,
-    location: req.body.location,
-    bio: req.body.bio,
-    age: req.body.age,
-    identifyingFeatures: req.body.identifyingFeatures,
-    medicalNeeds: req.body.medicalNeeds,
-    emergencyContacts: req.body.emergencyContacts,
   });
-  //Check if there's already an account with this email or username
+
   User.findOne(
     { $or: [{ email: req.body.email }, { userName: req.body.userName }] },
     (err, existingUser) => {

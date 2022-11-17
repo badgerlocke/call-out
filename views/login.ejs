@@ -9,6 +9,10 @@
       messages.info.forEach( el => { %>
       <div class="alert alert-info"><%= el.msg %></div>
       <% }) %> <% } %>
+      <div class="divider my-5"></div>
+      <!-- <h2><a href="/auth/google" class="btn btn-primary">
+          <i class="fab fa-google left"></i> Log In With Google
+      </a></h2> -->
       <form action="/login" method="POST">
         <div class="">
           <label for="exampleInputEmail1" class="form-label"
