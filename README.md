@@ -22,3 +22,13 @@ Call Out is a web application to improve the safety of outdoor enthusiasts. The 
 # Run
 
 `npm start`
+
+# Future improvements
+
+- Show active and completed trips separately
+- Change the ugly time inputs on 'new trip' page
+- Set up chron and re-enable email/SMS messages
+- Add checkin link in reminder email
+- Create profile page where user can update their details, contacts, etc
+- Add geotags, maps
+
