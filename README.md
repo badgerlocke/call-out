@@ -1,6 +1,6 @@
 # About
 
-Call Out is a web application to improve the safety of outdoor enthusiasts. The term "call out" comes from the caving community, where cavers contact others once they've returned to the surface. The call out time is at least several hours, if not more, after their expected return time. Caves are unpredictable and dangerous. A group that misses their call out time is likely to need to be rescued. This app is aimed at automating the process by messaging your emergency contacts if you don't checkin by your call out time. It can be used for any activity: backpacking, hiking, caving, travelling, etc.
+Call Out is a web application to improve the safety of outdoor enthusiasts. The term "call out" comes from the caving community, where cavers contact others once they've returned to the surface. The call out time is at least several hours, if not more, after their expected return time. Caves are unpredictable and dangerous. A group that misses their call out time is likely to need to be rescued. This app is aimed at automating the process by messaging your emergency contacts if you don't check in by your call out time. It can be used for any activity: backpacking, hiking, caving, travelling, etc.
 
 Try it out here:
 https://call-out-production.up.railway.app/
@@ -14,11 +14,22 @@ https://call-out-production.up.railway.app/
 # Things to add
 
 - Create a `.env` file in config folder and add the following as `key = value`
-  - PORT = 2121 (can be any port example: 3000)
+  - PORT = 3000 (can be any port)
   - DB_STRING = `your database URI`
-  - CLOUD_NAME = `your cloudinary cloud name`
   - API_KEY = `your cloudinary api key`
   - API_SECRET = `your cloudinary api secret`
+  - GOOGLE_CLIENT_ID = `your google cloud oauth2 client id`
+  - GOOGLE_CLIENT_SECRET = `your google cloud oauth2 client secret`
+
+
+  Optional environment variables:
+    For SMS capability, add auth codes for Twilio
+  - TWILIO_ACCOUNT_SID
+  - TWILIO_AUTH_TOKEN
+  - TWILIO_PHONE_NUMBER
+
+// Not required until user images are implemented:
+  - CLOUD_NAME = `your cloudinary cloud name`
 
 ---
 
@@ -34,4 +45,5 @@ https://call-out-production.up.railway.app/
 - Add checkin link in reminder email
 - Create profile page where user can update their details, contacts, etc
 - Add geotags, maps
-
+- If user has no trips, display a prompt on home page
+- New users: add an example trip?
