@@ -28,34 +28,6 @@
       <p><%= post.caption %></p>
     </div>
     <div class="">
-      <h2>Comment</h2>
-      <form action="/comment/createComment/<%=post._id%>" method="POST">
-        <div class="">
-            <label for="comment" class="form-label">Comment</label>
-            <input type="text" class="form-control" id="comment" name="comment">
-        </div>
-        <button type="submit" class="btn btn-primary">Submit</button>
-      </form>
-    </div>
-    <ul>
-      <% for(var i=0; i<comments.length; i++) {%>
-        <li class="">
-          <%= comments[i].user.userName %>
-          <br>
-          <%= comments[i].comment %>
-          <%if(comments[i].user._id == user.id){ %>
-            <form
-              action="/comment/deleteComment/<%= comments[i]._id %>?_method=DELETE"
-              method="POST"
-              class=""
-            >
-              <button class="btn btn-primary fa fa-trash" type="submit"></button>
-            </form>
-            <%}%>
-        </li>
-        <% } %>
-    </ul>
-    <div class="">
       <a class="btn btn-primary" href="/home">Return to Home</a>
       <a class="btn btn-primary" href="/feed">Return to Feed</a>
     </div>

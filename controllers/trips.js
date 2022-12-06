@@ -1,6 +1,5 @@
 const cloudinary = require("../middleware/cloudinary");
 const Trip = require("../models/Trip");
-const Comment = require("../models/Comment");
 const User = require("../models/User")
 
 module.exports = {
@@ -77,8 +76,7 @@ module.exports = {
   getTrip: async (req, res) => {
     try {
       const trip = await Trip.findById(req.params.id);
-      const comments = await Comment.find({trip: req.params.id}).sort({ createdAt: "desc" }).populate('user').lean();
-      res.render("trip.ejs", { trip: trip, user: req.user, comments: comments });
+      res.render("trip.ejs", { trip: trip, user: req.user });
     } catch (err) {
       console.log(err);
     }
