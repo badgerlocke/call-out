@@ -19,8 +19,6 @@ const UserSchema = new mongoose.Schema({
   location: { type: String },
   bio: { type: String },
   age: { type: Number },
-  identifyingFeatures: { type: String },
-  medicalNeeds: { type: Array, default: [] },
   emergencyContacts: { type: Array, default: [] },
   numTrips: { type: Number, default: 0},
 });
