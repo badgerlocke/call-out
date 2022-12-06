@@ -3,18 +3,30 @@ require('dotenv').config({path: './config/.env'})
 const Trips = require('../models/Trip')
 const Users = require('../models/User')
 
+async function findUser(trip) {
+    try {
+        let user = await Users.findById({_id: trip.user})
+        return user
+    } catch (error) {
+        console.error(error)
+        return 'error'
+    }
+}
+
 module.exports = {
-    reminderEmail: (user,trip) => {    
+    reminderEmail: async (trip) => {    
+        let user = await findUser(trip);
         return {
             from: process.env.EMAIL, // sender address
             to: user.email, // list of receivers
             subject: "Reminder to check in", // Subject line
-            text: `Please log in to your Call Out account to check in after your trip! We will notify your contacts if you haven't checked in by ${trip.time}`, // plain text body
-            html: "<h1>`Please log in to your Call Out account to check in after your trip! We will notify your contacts if you haven't checked in by ${trip.time}`</h1>", // html body
+            text: `Please log in to your Call Out account to check in after your trip! We will notify your contacts if you haven't checked in by ${trip.notifyTime}`, // plain text body
+            html: `<h1>Please log in to your Call Out account to check in after your trip! We will notify your contacts if you haven't checked in by ${trip.notifyTime}</h1>`, // html body
         }
     },
-    lateTripEmail: (user,trip) => {    
-        let words = `Please check on ${user.name}. They have not checked in after their trip, which was expected to return at ${trip.time}`
+    lateTripEmail: (trip) => {    
+        let user = findUser(trip)
+        let words = `Please check on ${user.userName}. They have not checked in after their trip, which was expected to return at ${trip.time}`
         return {
             from: process.env.EMAIL, // sender address
             to: user.contacts, // list of receivers
@@ -24,3 +36,4 @@ module.exports = {
         }
     }
 }
+

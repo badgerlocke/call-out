@@ -1,71 +1,54 @@
 //Monitors for late trips. Sends email and text alerts.
 const Trips = require('../models/Trip')
 const Users = require('../models/User')
+const template = require('../controllers/emails')
 const cron = require('node-cron')
 const { sendSMS } = require('./sms');
 const process = require('process');
 const nodemailer = require("nodemailer");
+const transporter = nodemailer.createTransport({
+  service: "Gmail",
+  auth: {
+      user: process.env.EMAIL,
+      pass: process.env.EMAIL_PW
+  }
+});
 
-//Runs once per minute and checks for late users.
+cronStart();
+
+
+//Runs once per hour and checks for late users.
 //For help changing cronStr: https://cron.help/#0_0_*_*_*
-// function sendDailyReminders() {
-//     let reminderTime = process.env.DAILY_REMINDER_TIME || 0
-//     let cronStr = `0 ${reminderTime} * * *`
-//     //cronStr = `* * * * *`  //FOR TESTING: Uncomment and this will try to send a text every minute.
-//     // console.log('Cron scheduled')
-//     cron.schedule(cronStr, () => {
-//         console.log('Reminders.....GO!')
-//         getReminders()
-      // });
-// }
-
-//TODO: Change to "Check time" or something similar. Maybe store time when server starts, and check every n minutes after?
-// const isAfterToday = (date) => {
-//     const today = new Date(); 
-//     return date > today;
-// }
-
-//TODO: Split function into smaller bits. One for sending mail only, one to determine email contents/targets
-async function sendEmail(user) {
-    const transporter = nodemailer.createTransport({
-      service: "Gmail",
-      auth: {
-          user: process.env.EMAIL,
-          pass: process.env.EMAIL_PW
-      }
-  });
-  // send mail with defined transport object
-  let info = await transporter.sendMail({
-    from: process.env.EMAIL, // sender address
-    to: myEmail, // list of receivers
-    subject: "Reminder to check in", // Subject line
-    text: `Please log in to your Call Out account to check in after your trip! We will notify your contacts if you haven't checked in by {}`, // plain text body
-    html: "<b>Hello world?</b>", // html body
-  });
-  console.log("Message sent: %s", info.messageId);
+function cronStart() {
+    let cronStr = `0 * * * *`
+    //cronStr = `* * * * *`  //FOR TESTING: Uncomment and this will try to send a text every minute.
+    console.log('Cron scheduled')
+    cron.schedule(cronStr, () => {
+        console.log('Reminders.....GO!')
+        checkForLate()
+      });
 }
 
-// DISABLED so it stops spamming me!
-// main().catch(console.error);
 
-
-
-async function main() {
+async function checkForLate() {
   //Get trips due back. 
   //Loop through
   //Send an email to each
-  let remindTrips = findTripsDue()
-  for (let trip in remindTrips) {
-
+  let remindTrips = await findTripsDue()
+  for (const trip of remindTrips) {
+    let msg = await template.reminderEmail(trip)
+    await transporter.sendMail(msg)
   }
 
   let lateTrips = await findLate()
-
-  for (let trip in lateTrips) {
-
+  for (const trip of lateTrips) {
+    console.log(`Trip late: ${trip.location}`)
+    let msg = await template.reminderEmail(trip)
+    console.log(msg)
+    await transporter.sendMail(msg)
   }
+
 }
-main()
 
 //Find trips that haven't checked in
 async function findLate() {
@@ -99,23 +82,4 @@ async function findTripsDue() {
     console.log(err)
     return []
   }
-}
-
-async function sendCheckinReminder() {
-  //${user.name}, don't forget to check in when you return from your ${trip.type} trip! Your expected return time was ${trip.returnTime}. 
-  //Eventually, add "Click here to check in" link to the email
-  
-}
-
-async function sendReminder() {
-  //Send user a reminder to check in
-}
-
-async function sendSOS() {
-  //Alert user's contacts if it is past their callout time
-
-}
-
-async function sendEmail(addresses,text) {
-
 }
