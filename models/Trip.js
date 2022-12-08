@@ -35,6 +35,14 @@ const TripSchema = new mongoose.Schema({
   },
   checkInTime: {
     type: Date
+  },
+  reminderSent: {
+    type: Boolean,
+    default: false
+  },
+  sosSent: {
+    type: Boolean,
+    default: false
   }
   // participants: {
   //   type: Array,

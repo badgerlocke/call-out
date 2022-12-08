@@ -20,7 +20,7 @@ cronStart();
 //Runs once per hour and checks for late users.
 //For help changing cronStr: https://cron.help/#0_0_*_*_*
 function cronStart() {
-    let cronStr = `0 * * * *`
+    let cronStr = `0 0 * * *`
     //cronStr = `* * * * *`  //FOR TESTING: Uncomment and this will try to send a text every minute.
     console.log('Cron scheduled')
     cron.schedule(cronStr, () => {
@@ -35,17 +35,20 @@ async function checkForLate() {
   //Loop through
   //Send an email to each
   let remindTrips = await findTripsDue()
+  console.log(`Sending out reminders for ${remindTrips.length} trips.`)
   for (const trip of remindTrips) {
     let msg = await template.reminderEmail(trip)
     await transporter.sendMail(msg)
+    markSent(trip,'reminderSent')
   }
 
   let lateTrips = await findLate()
+  console.log(`Sending out SOS for ${lateTrips.length} trips.`)
   for (const trip of lateTrips) {
-    console.log(`Trip late: ${trip.location}`)
-    let msg = await template.reminderEmail(trip)
-    console.log(msg)
+    // console.log(`Trip late: ${trip.location}`)
+    let msg = await template.lateTripEmail(trip)
     await transporter.sendMail(msg)
+    markSent(trip,'sosSent')
   }
 
 }
@@ -55,6 +58,7 @@ async function findLate() {
   try {
     const lateTrips = await Trips.find({
       checkedIn: false,
+      sosSent: false,
       notifyTime: {
         $lt: new Date()}
       })
@@ -71,6 +75,7 @@ async function findTripsDue() {
   try {
     const returningSoon = await Trips.find({
       checkedIn: false,
+      reminderSent: false,
       returnTime: {
         $lte: new Date()},
       notifyTime: {
@@ -81,5 +86,18 @@ async function findTripsDue() {
   } catch(err) {
     console.log(err)
     return []
+  }
+}
+
+async function markSent(trip,type) {
+  try {
+    await Trips.findOneAndUpdate(
+      { _id: trip.id },
+      {
+        [type]: true
+      }
+    );
+  } catch (error) {
+    console.error(error)
   }
 }
