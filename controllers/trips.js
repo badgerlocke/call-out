@@ -25,9 +25,9 @@ module.exports = {
         const today = new Date();
         return date > today;
       }
-      for (let i=0; i< trips.length; i++) {
-        console.log(`Is ${trips[i].returnTime} after today? ${isAfterToday(trips[i].returnTime)}`)
-      }
+      // for (let i=0; i< trips.length; i++) {
+      //   console.log(`Is ${trips[i].returnTime} after today? ${isAfterToday(trips[i].returnTime)}`)
+      // }
       res.render("profile.ejs", { trips: trips, user: req.user });
     } catch (err) {
       console.log(err);

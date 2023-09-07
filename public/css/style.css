@@ -36,63 +36,16 @@
       background-image: url("../bkg/vertical/bridge-lg.png");
     }
   }
-  @media (max-width: 641px) {
-    .bkg-flame::before {
-      background-image: url("../bkg/vertical/flaming-mist-sm.jpg");
-    }
-  }
-  
-  @media (max-width: 1000px) {
-    .bkg-flame::before {
-      background-image: url("../bkg/vertical/flaming-mist-md.jpg");
-    }
-  }
-  
-  @media (min-width: 1008px) {
-    .bkg-flame::before {
-      background-image: url("../bkg/vertical/flaming-mist-lg.jpg");
-    }
-  }
-  @media (max-width: 641px) {
-    .bkg-forest-mist::before {
-      background-image: url("../bkg/vertical/forest-mist-sm.jpg");
-    }
-  }
-  
-  @media (max-width: 1000px) {
-    .bkg-forest-mist::before {
-      background-image: url("../bkg/vertical/forest-mist-md.jpg");
-    }
-  }
-  
-  @media (min-width: 1008px) {
-    .bkg-forest-mist::before {
-      background-image: url("../bkg/vertical/forest-lake-lg.jpg");
-    }
-  }
-  @media (max-width: 1000px) {
-    .bkg-foggy-lake::before {
-      background-image: url("../bkg/horizontal/foggy-lake-md.jpg");
-    }
-  }
-  
-  @media (min-width: 1008px) {
-    .bkg-foggy-lake::before {
-      background-image: url("../bkg/horizontal/foggy-lake-lg.jpg");
-    }
-  }
   @media (max-width: 1000px) {
     .bkg-forest::before {
       background-image: url("../bkg/horizontal/forest-md.jpg");
     }
   }
-  
-  @media (min-width: 1008px) {
-    .bkg-forest::before {
-      background-image: url("../bkg/horizontal/forest-lg.jpg");
+  @media (max-width: 1200px) {
+    .bkg-sunset::before {
+      background-image: url("../bkg/horizontal/sunset-md.jpg");
     }
   }
-
   @media (max-width: 4008px) {
     .bkg-sunset::before {
       background-image: url("../bkg/horizontal/sunset-lg.jpg");
