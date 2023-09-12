@@ -1,4 +1,3 @@
-const cloudinary = require("../middleware/cloudinary");
 const Trip = require("../models/Trip");
 const User = require("../models/User")
 
@@ -81,13 +80,6 @@ module.exports = {
       console.log(err);
     }
   },
-  addPic: async (req, res) => {
-      // TODO - add pics to trip or user profile
-      // Upload image to cloudinary
-      // const result = await cloudinary.uploader.upload(req.file.path);
-              // image: result.secure_url,
-        // cloudinaryId: result.public_id,
-  },
   createTrip: async (req, res) => {
     console.log(req.body)
     try {
@@ -133,8 +125,6 @@ module.exports = {
     try {
       // Find trip by id
       let trip = await Trip.findById({ _id: req.params.id });
-      // Delete image from cloudinary
-      await cloudinary.uploader.destroy(trip.cloudinaryId);
       // Delete trip from db
       await Trip.remove({ _id: req.params.id });
       console.log("Deleted Trip");
