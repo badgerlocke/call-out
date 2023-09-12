@@ -1,9 +1,9 @@
 # About
 
-Call Out is a web application to improve the safety of outdoor enthusiasts. The term "call out" comes from the caving community, where cavers contact others once they've returned to the surface. The call out time is at least several hours, if not more, after their expected return time. Caves are unpredictable and dangerous. A group that misses their call out time is likely to need to be rescued. This app is aimed at automating the process by messaging your emergency contacts if you don't check in by your call out time. It can be used for any activity: backpacking, hiking, caving, travelling, etc.
+Call Out is a web application to improve the safety of outdoor enthusiasts. The term "call out" comes from the caving community, where cavers contact others once they've returned to the surface. Caves are unpredictable and dangerous, and a group that is underground significantly longer than they planned may need to be rescued. This app is aimed at automating the process by messaging your emergency contacts if you don't check in by a certain time. It can be used for any activity: backpacking, hiking, caving, travelling, etc.
 
 Try it out here:
-https://call-out-production.up.railway.app/
+[Demo](https://muddy-pear-pea-coat.cyclic.cloud/)
 
 # Install
 
@@ -16,20 +16,14 @@ https://call-out-production.up.railway.app/
 - Create a `.env` file in config folder and add the following as `key = value`
   - PORT = 3000 (can be any port)
   - DB_STRING = `your database URI`
-  - API_KEY = `your cloudinary api key`
-  - API_SECRET = `your cloudinary api secret`
   - GOOGLE_CLIENT_ID = `your google cloud oauth2 client id`
   - GOOGLE_CLIENT_SECRET = `your google cloud oauth2 client secret`
 
 
-  Optional environment variables:
-    For SMS capability, add auth codes for Twilio
+- (Optional) For SMS capability, add auth codes for Twilio
   - TWILIO_ACCOUNT_SID
   - TWILIO_AUTH_TOKEN
   - TWILIO_PHONE_NUMBER
-
-// Not required until user images are implemented:
-  - CLOUD_NAME = `your cloudinary cloud name`
 
 ---
 
