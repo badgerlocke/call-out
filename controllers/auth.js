@@ -43,20 +43,18 @@ exports.postLogin = (req, res, next) => {
     });
   })(req, res, next);
 };
-passport.authenticate('google', { scope: ['profile', 'email', 'https://www.googleapis.com/auth/drive', 'https://www.googleapis.com/auth/spreadsheets.readonly'], accessType: 'offline', prompt: 'consent' })
 
-
-
-
-exports.logout = (req, res) => {
-  req.logout(() => {
-    console.log('User has logged out.')
-  })
-  req.session.destroy((err) => {
-    if (err)
-      console.log("Error : Failed to destroy the session during logout.", err);
-    req.user = null;
-    res.redirect("/");
+exports.logout = (req, res, next) => {
+  req.logout((err) => {
+    if (err) {
+      return next(err);
+    }
+    req.session.destroy((err) => {
+      if (err)
+        console.log("Error : Failed to destroy the session during logout.", err);
+      req.user = null;
+      res.redirect("/");
+    });
   });
 };
 
@@ -89,35 +87,30 @@ exports.postSignup = async (req, res, next) => {
     gmail_remove_dots: false,
   });
 
-  const user = new User({
-    userName: req.body.userName,
-    email: req.body.email,
-    password: req.body.password,
-  });
+  try {
+    const existingUser = await User.findOne({
+      $or: [{ email: req.body.email }, { userName: req.body.userName }],
+    });
+    if (existingUser) {
+      req.flash("errors", {
+        msg: "Account with that email address or username already exists.",
+      });
+      return res.redirect("../signup");
+    }
 
-  User.findOne(
-    { $or: [{ email: req.body.email }, { userName: req.body.userName }] },
-    (err, existingUser) => {
+    const user = new User({
+      userName: req.body.userName,
+      email: req.body.email,
+      password: req.body.password,
+    });
+    await user.save();
+    req.logIn(user, (err) => {
       if (err) {
         return next(err);
       }
-      if (existingUser) {
-        req.flash("errors", {
-          msg: "Account with that email address or username already exists.",
-        });
-        return res.redirect("../signup");
-      }
-      user.save((err) => {
-        if (err) {
-          return next(err);
-        }
-        req.logIn(user, (err) => {
-          if (err) {
-            return next(err);
-          }
-          res.redirect("/home");
-        });
-      });
-    }
-  );
+      res.redirect("/home");
+    });
+  } catch (err) {
+    return next(err);
+  }
 };

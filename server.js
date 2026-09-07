@@ -3,7 +3,7 @@ const app = express();
 const mongoose = require("mongoose");
 const passport = require("passport");
 const session = require("express-session");
-const MongoStore = require("connect-mongo")(session);
+const MongoStore = require("connect-mongo");
 const methodOverride = require("method-override");
 const flash = require("express-flash");
 const logger = require("morgan");
@@ -13,6 +13,11 @@ const tripRoutes = require("./routes/trips");
 
 //Use .env file in config folder
 require("dotenv").config({ path: "./config/.env" });
+
+if (!process.env.SESSION_SECRET) {
+  console.error("SESSION_SECRET is required in config/.env");
+  process.exit(1);
+}
 
 // Passport config
 require("./config/passport")(passport);
@@ -39,10 +44,12 @@ connectDB().then(() => {
   // Setup Sessions - stored in MongoDB
   app.use(
     session({
-      secret: "a cat named Broseph",
+      secret: process.env.SESSION_SECRET,
       resave: false,
       saveUninitialized: false,
-      store: new MongoStore({ mongooseConnection: mongoose.connection }),
+      store: MongoStore.create({
+        client: mongoose.connection.getClient(),
+      }),
     })
   );
 
@@ -55,7 +62,7 @@ connectDB().then(() => {
 
   //Setup Routes For Which The Server Is Listening
   app.use("/", mainRoutes);
-  app.use('/auth', require('./routes/auth'))
+  app.use("/auth", require("./routes/auth"));
   app.use("/trips", tripRoutes);
 
   //Server Running
@@ -63,5 +70,3 @@ connectDB().then(() => {
     console.log("Server is running, you better catch it!");
   });
 });
-
-

@@ -16,6 +16,7 @@ Try it out here:
 - Create a `.env` file in config folder and add the following as `key = value`
   - PORT = 3000 (can be any port)
   - DB_STRING = `your database URI`
+  - SESSION_SECRET = `a long random string`
   - GOOGLE_CLIENT_ID = `your google cloud oauth2 client id`
   - GOOGLE_CLIENT_SECRET = `your google cloud oauth2 client secret`
 
@@ -30,6 +31,10 @@ Try it out here:
 # Run
 
 `npm start`
+
+To rebuild CSS after changing Tailwind or DaisyUI:
+
+`npm run build:css`
 
 # Future improvements
 

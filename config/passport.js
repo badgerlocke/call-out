@@ -1,8 +1,7 @@
 const LocalStrategy = require("passport-local").Strategy;
 
-const GoogleStrategy = require('passport-google-oauth20').Strategy
-const mongoose = require('mongoose')
-const User = require('../models/User')
+const GoogleStrategy = require("passport-google-oauth20").Strategy;
+const User = require("../models/User");
 
 module.exports = function (passport) {
   passport.use(
@@ -10,36 +9,34 @@ module.exports = function (passport) {
       {
         clientID: process.env.GOOGLE_CLIENT_ID,
         clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-        callbackURL: '/auth/google/callback',
+        callbackURL: "/auth/google/callback",
       },
       async (accessToken, refreshToken, profile, done) => {
         const newUser = {
           googleId: profile.id,
           userName: profile.displayName,
-          email: profile.emails[0].value
-        }
-        // console.log(`New user: ${JSON.stringify(newUser)}`)
+          email: profile.emails[0].value,
+        };
         try {
-          let user = await User.findOne({ googleId: profile.id })
+          let user = await User.findOne({ googleId: profile.id });
 
           if (user) {
-            done(null, user)
+            done(null, user);
           } else {
-            user = await User.create(newUser)
-            done(null, user)
+            user = await User.create(newUser);
+            done(null, user);
           }
         } catch (err) {
-          console.error(err)
+          console.error(err);
+          done(err);
         }
       }
     )
-  )
+  );
   passport.use(
-    new LocalStrategy({ usernameField: "email" }, (email, password, done) => {
-      User.findOne({ email: email.toLowerCase() }, (err, user) => {
-        if (err) {
-          return done(err);
-        }
+    new LocalStrategy({ usernameField: "email" }, async (email, password, done) => {
+      try {
+        const user = await User.findOne({ email: email.toLowerCase() });
         if (!user) {
           return done(null, false, { msg: `Email ${email} not found.` });
         }
@@ -58,7 +55,9 @@ module.exports = function (passport) {
           }
           return done(null, false, { msg: "Invalid email or password." });
         });
-      });
+      } catch (err) {
+        return done(err);
+      }
     })
   );
 
@@ -66,7 +65,12 @@ module.exports = function (passport) {
     done(null, user.id);
   });
 
-  passport.deserializeUser((id, done) => {
-    User.findById(id, (err, user) => done(err, user));
+  passport.deserializeUser(async (id, done) => {
+    try {
+      const user = await User.findById(id);
+      done(null, user);
+    } catch (err) {
+      done(err);
+    }
   });
 };

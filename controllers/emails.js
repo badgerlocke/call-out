@@ -5,7 +5,7 @@ const Users = require('../models/User')
 
 async function findUser(trip) {
     try {
-        let user = await Users.findById({_id: trip.user})
+        let user = await Users.findById(trip.user)
         return user
     } catch (error) {
         console.error(error)
