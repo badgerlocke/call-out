@@ -3,6 +3,21 @@ const LocalStrategy = require("passport-local").Strategy;
 const GoogleStrategy = require("passport-google-oauth20").Strategy;
 const User = require("../models/User");
 
+function escapeRegex(value) {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
+async function uniqueUserName(baseName) {
+  const base = (baseName && baseName.trim()) || "user";
+  let candidate = base;
+  let n = 0;
+  while (await User.exists({ userName: candidate })) {
+    n += 1;
+    candidate = `${base} ${n}`;
+  }
+  return candidate;
+}
+
 module.exports = function (passport) {
   passport.use(
     new GoogleStrategy(
@@ -12,23 +27,58 @@ module.exports = function (passport) {
         callbackURL: "/auth/google/callback",
       },
       async (accessToken, refreshToken, profile, done) => {
-        const newUser = {
-          googleId: profile.id,
-          userName: profile.displayName,
-          email: profile.emails[0].value,
-        };
         try {
-          let user = await User.findOne({ googleId: profile.id });
-
-          if (user) {
-            done(null, user);
-          } else {
-            user = await User.create(newUser);
-            done(null, user);
+          const email = profile.emails && profile.emails[0] && profile.emails[0].value;
+          if (!email) {
+            return done(new Error("Google profile is missing an email address."));
           }
+
+          let user = await User.findOne({ googleId: profile.id });
+          if (user) {
+            return done(null, user);
+          }
+
+          user = await User.findOne({
+            email: { $regex: new RegExp(`^${escapeRegex(email)}$`, "i") },
+          });
+          if (user) {
+            user.googleId = profile.id;
+            await user.save();
+            return done(null, user);
+          }
+
+          user = await User.create({
+            googleId: profile.id,
+            userName: await uniqueUserName(profile.displayName),
+            email: email.toLowerCase(),
+          });
+          return done(null, user);
         } catch (err) {
+          if (err.code === 11000) {
+            try {
+              const existing =
+                (await User.findOne({ googleId: profile.id })) ||
+                (await User.findOne({
+                  email: {
+                    $regex: new RegExp(
+                      `^${escapeRegex(profile.emails[0].value)}$`,
+                      "i"
+                    ),
+                  },
+                }));
+              if (existing) {
+                if (!existing.googleId) {
+                  existing.googleId = profile.id;
+                  await existing.save();
+                }
+                return done(null, existing);
+              }
+            } catch (lookupErr) {
+              return done(lookupErr);
+            }
+          }
           console.error(err);
-          done(err);
+          return done(err);
         }
       }
     )
