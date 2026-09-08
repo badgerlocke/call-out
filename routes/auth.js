@@ -2,20 +2,27 @@ const express = require('express')
 const passport = require('passport')
 const router = express.Router()
 
-// @desc    Auth with Google
-// @route   GET /auth/google
-// Scope necessary to get user ID and email
-router.get('/google', passport.authenticate('google', { scope: ['profile','email'] }))
+const googleAuthEnabled =
+  process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET
 
-// @desc    Google auth callback
-// @route   GET /auth/google/callback
-router.get(
-  '/google/callback',
-  passport.authenticate('google', { failureRedirect: '/login' }),
-  (req, res) => {
-    res.redirect('/')
-  }
-)
+if (googleAuthEnabled) {
+  // Scope necessary to get user ID and email
+  router.get(
+    '/google',
+    passport.authenticate('google', { scope: ['profile', 'email'] })
+  )
+
+  router.get(
+    '/google/callback',
+    passport.authenticate('google', {
+      failureRedirect: '/login',
+      failureFlash: true,
+    }),
+    (req, res) => {
+      res.redirect('/')
+    }
+  )
+}
 
 // @desc    Logout user
 // @route   /auth/logout

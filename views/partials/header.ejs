@@ -57,6 +57,9 @@
         </div>
       </nav>
     </header>
+    <div class="container max-w-xl px-4 pt-4">
+      <%- include('flash-messages') -%>
+    </div>
     <% if (locals.user) { %>
       <%- include('new-trip-modal') %>
       <script src="/js/newtrip.js"></script>

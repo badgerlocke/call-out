@@ -2,36 +2,59 @@ const passport = require("passport");
 const validator = require("validator");
 const User = require("../models/User");
 
+async function uniqueUserName(baseName) {
+  const base = baseName.trim();
+  let candidate = base;
+  let suffix = 0;
+
+  while (await User.exists({ userName: candidate })) {
+    suffix += 1;
+    candidate = `${base} ${suffix}`;
+  }
+
+  return candidate;
+}
+
 exports.getLogin = (req, res) => {
   if (req.user) {
     return res.redirect("/");
   }
   res.render("login", {
     title: "Login",
+    googleAuthEnabled: Boolean(
+      process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET
+    ),
   });
 };
 
 exports.postLogin = (req, res, next) => {
   const validationErrors = [];
-  if (!validator.isEmail(req.body.email))
+  const email = typeof req.body.email === "string" ? req.body.email : "";
+  const password =
+    typeof req.body.password === "string" ? req.body.password : "";
+
+  if (!validator.isEmail(email))
     validationErrors.push({ msg: "Please enter a valid email address." });
-  if (validator.isEmpty(req.body.password))
+  if (validator.isEmpty(password))
     validationErrors.push({ msg: "Password cannot be blank." });
 
   if (validationErrors.length) {
     req.flash("errors", validationErrors);
     return res.redirect("/login");
   }
-  req.body.email = validator.normalizeEmail(req.body.email, {
+  req.body.email = validator.normalizeEmail(email, {
     gmail_remove_dots: false,
   });
+  req.body.password = password;
 
-  passport.authenticate("local", (err, user, info) => {
+  passport.authenticate("local", (err, user) => {
     if (err) {
       return next(err);
     }
     if (!user) {
-      req.flash("errors", info);
+      req.flash("errors", {
+        msg: "The email or password you entered is incorrect.",
+      });
       return res.redirect("/login");
     }
     req.logIn(user, (err) => {
@@ -68,49 +91,66 @@ exports.getSignup = (req, res) => {
 };
 
 exports.postSignup = async (req, res, next) => {
-  //Validate user data
   const validationErrors = [];
-  if (!validator.isEmail(req.body.email))
+  const realName =
+    typeof req.body.realName === "string" ? req.body.realName.trim() : "";
+  const email = typeof req.body.email === "string" ? req.body.email : "";
+  const password =
+    typeof req.body.password === "string" ? req.body.password : "";
+  const confirmPassword =
+    typeof req.body.confirmPassword === "string"
+      ? req.body.confirmPassword
+      : "";
+
+  if (!realName)
+    validationErrors.push({ msg: "Please enter your name." });
+  if (!validator.isEmail(email))
     validationErrors.push({ msg: "Please enter a valid email address." });
-  if (!validator.isLength(req.body.password, { min: 8 }))
+  if (!validator.isLength(password, { min: 8 }))
     validationErrors.push({
       msg: "Password must be at least 8 characters long",
     });
-  if (req.body.password !== req.body.confirmPassword)
+  if (password !== confirmPassword)
     validationErrors.push({ msg: "Passwords do not match" });
 
   if (validationErrors.length) {
     req.flash("errors", validationErrors);
-    return res.redirect("../signup");
+    return res.redirect("/signup");
   }
-  req.body.email = validator.normalizeEmail(req.body.email, {
+  const normalizedEmail = validator.normalizeEmail(email, {
     gmail_remove_dots: false,
   });
 
   try {
-    const existingUser = await User.findOne({
-      $or: [{ email: req.body.email }, { userName: req.body.userName }],
-    });
+    const existingUser = await User.findOne({ email: normalizedEmail });
     if (existingUser) {
       req.flash("errors", {
-        msg: "Account with that email address or username already exists.",
+        msg: "An account with that email address already exists.",
       });
-      return res.redirect("../signup");
+      return res.redirect("/signup");
     }
 
     const user = new User({
-      userName: req.body.userName,
-      email: req.body.email,
-      password: req.body.password,
+      realName,
+      userName: await uniqueUserName(realName),
+      email: normalizedEmail,
+      password,
     });
     await user.save();
     req.logIn(user, (err) => {
       if (err) {
         return next(err);
       }
+      req.flash("success", { msg: "Your account has been created." });
       res.redirect("/");
     });
   } catch (err) {
+    if (err.code === 11000) {
+      req.flash("errors", {
+        msg: "An account with that email address already exists.",
+      });
+      return res.redirect("/signup");
+    }
     return next(err);
   }
 };
