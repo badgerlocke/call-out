@@ -20,6 +20,11 @@ Try it out here:
   - GOOGLE_CLIENT_ID = `your google cloud oauth2 client id`
   - GOOGLE_CLIENT_SECRET = `your google cloud oauth2 client secret`
 
+- (Optional) For account-holder email alerts, add:
+  - EMAIL = `your Gmail address`
+  - EMAIL_PW = `your Gmail app password`
+  - USER_ALERTS_ENABLED = `true` (defaults to true when both email values exist)
+  - CONTACT_ALERTS_ENABLED = `false` (contact alerts are dry-run only by default)
 
 - (Optional) For SMS capability, add auth codes for Twilio
   - TWILIO_ACCOUNT_SID

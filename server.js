@@ -8,11 +8,13 @@ const methodOverride = require("method-override");
 const flash = require("express-flash");
 const logger = require("morgan");
 const connectDB = require("./config/database");
+
+// Use .env file in config folder before loading modules that read feature flags.
+require("dotenv").config({ path: "./config/.env" });
+
 const mainRoutes = require("./routes/main");
 const tripRoutes = require("./routes/trips");
-
-//Use .env file in config folder
-require("dotenv").config({ path: "./config/.env" });
+const { startAlertWorker } = require("./controllers/reminders");
 
 if (!process.env.SESSION_SECRET) {
   console.error("SESSION_SECRET is required in config/.env");
@@ -25,6 +27,8 @@ require("./config/passport")(passport);
 //Connect to database, then set up everything else
 //Necessary for serverless deployment; otherwise 'then' statement can removed
 connectDB().then(() => {
+  startAlertWorker();
+
   //Using EJS for views
   app.set("view engine", "ejs");
 
