@@ -2,20 +2,10 @@ const LocalStrategy = require("passport-local").Strategy;
 
 const GoogleStrategy = require("passport-google-oauth20").Strategy;
 const User = require("../models/User");
+const { uniqueUserName } = require("../utils/username");
 
 function escapeRegex(value) {
   return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-}
-
-async function uniqueUserName(baseName) {
-  const base = (baseName && baseName.trim()) || "user";
-  let candidate = base;
-  let n = 0;
-  while (await User.exists({ userName: candidate })) {
-    n += 1;
-    candidate = `${base} ${n}`;
-  }
-  return candidate;
 }
 
 module.exports = function (passport) {
@@ -53,7 +43,9 @@ module.exports = function (passport) {
 
             user = await User.create({
               googleId: profile.id,
-              userName: await uniqueUserName(profile.displayName),
+              userName: await uniqueUserName(
+                profile.displayName || email.split("@")[0]
+              ),
               realName: profile.displayName,
               email: email.toLowerCase(),
             });

@@ -32,11 +32,48 @@
                 theme === DARK ? 'Switch to light mode' : 'Switch to dark mode'
             )
         })
+        document.querySelectorAll('[data-theme-choice]').forEach((choice) => {
+            const selected = choice.dataset.themeChoice === theme
+            choice.setAttribute('aria-pressed', String(selected))
+            choice.classList.toggle('btn-active', selected)
+        })
     }
 
-    applyTheme(savedTheme() || (systemPrefersDark.matches ? DARK : LIGHT))
+    function syncTheme(theme) {
+        const url = document.documentElement.dataset.themeSyncUrl
+        if (!url) return Promise.resolve()
+
+        return fetch(url, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ theme }),
+        }).then((response) => {
+            if (!response.ok) throw new Error('Theme save failed')
+        })
+    }
+
+    function chooseTheme(theme) {
+        saveTheme(theme)
+        applyTheme(theme)
+        document.querySelectorAll('[data-theme-error]').forEach((error) => {
+            error.hidden = true
+        })
+        syncTheme(theme).catch(() => {
+            document.querySelectorAll('[data-theme-error]').forEach((error) => {
+                error.hidden = false
+            })
+        })
+    }
+
+    const accountTheme = document.documentElement.dataset.accountTheme
+    const initialTheme =
+        accountTheme === LIGHT || accountTheme === DARK
+            ? accountTheme
+            : savedTheme() || (systemPrefersDark.matches ? DARK : LIGHT)
+    applyTheme(initialTheme)
 
     systemPrefersDark.addEventListener('change', (event) => {
+        if (document.documentElement.dataset.accountTheme) return
         if (!savedTheme()) applyTheme(event.matches ? DARK : LIGHT)
     })
 
@@ -47,8 +84,13 @@
         document.querySelectorAll('[data-theme-toggle]').forEach((toggle) => {
             toggle.addEventListener('click', () => {
                 const next = document.documentElement.dataset.theme === DARK ? LIGHT : DARK
-                saveTheme(next)
-                applyTheme(next)
+                chooseTheme(next)
+            })
+        })
+
+        document.querySelectorAll('[data-theme-choice]').forEach((choice) => {
+            choice.addEventListener('click', () => {
+                chooseTheme(choice.dataset.themeChoice)
             })
         })
     })

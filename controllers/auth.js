@@ -1,19 +1,7 @@
 const passport = require("passport");
 const validator = require("validator");
 const User = require("../models/User");
-
-async function uniqueUserName(baseName) {
-  const base = baseName.trim();
-  let candidate = base;
-  let suffix = 0;
-
-  while (await User.exists({ userName: candidate })) {
-    suffix += 1;
-    candidate = `${base} ${suffix}`;
-  }
-
-  return candidate;
-}
+const { uniqueUserName } = require("../utils/username");
 
 exports.getLogin = (req, res) => {
   if (req.user) {

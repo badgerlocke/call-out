@@ -26,7 +26,8 @@ module.exports = {
     },
     lateTripEmail: async (trip) => {    
         let user = await findUser(trip);
-        let words = `Please check on ${user.userName}. They have not checked in after their trip, which was expected to return at ${trip.notifyTime}`
+        const displayName = user.realName || user.userName || "this person";
+        let words = `Please check on ${displayName}. They have not checked in after their trip, which was expected to return at ${trip.notifyTime}`
         return {
             from: 'Call Out App', // sender address 
             to: `${user.email}, ${user.contacts}`, // list of receivers

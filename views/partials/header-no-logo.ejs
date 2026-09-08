@@ -1,5 +1,12 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="light">
+<html
+  lang="en"
+  data-theme="<%= locals.user && user.theme ? user.theme : 'light' %>"
+  <% if (locals.user) { %>
+    <% if (user.theme) { %>data-account-theme="<%= user.theme %>"<% } %>
+    data-theme-sync-url="/settings/theme"
+  <% } %>
+>
   <head>
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />

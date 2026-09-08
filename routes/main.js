@@ -11,7 +11,7 @@ router.get("/home", (req, res) => {
   const query = queryIndex === -1 ? "" : req.originalUrl.slice(queryIndex);
   res.redirect(`/${query}`);
 });
-router.get("/profile", ensureAuth, tripsController.getProfile);
+router.get("/profile", ensureAuth, (req, res) => res.redirect("/settings"));
 router.get("/feed", ensureAuth, tripsController.getFeed);
 router.get("/mytrips", tripsController.getMyTrips);
 

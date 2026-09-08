@@ -1,6 +1,17 @@
 const bcrypt = require("bcrypt");
 const mongoose = require("mongoose");
 
+const EmergencyContactSchema = new mongoose.Schema(
+  {
+    name: { type: String, required: true, trim: true },
+    email: { type: String, trim: true, lowercase: true },
+    phone: { type: String, trim: true },
+    relationship: { type: String, trim: true },
+    notes: { type: String, trim: true },
+  },
+  { _id: true }
+);
+
 //Users need a username, password, and email.
 //Optional parameters: Real name, phone number,
 //location, bio, profile pic, special/medical needs
@@ -11,7 +22,7 @@ const UserSchema = new mongoose.Schema({
     unique: true,
     sparse: true,
   },
-  userName: { type: String, unique: true }, 
+  userName: { type: String }, 
   realName: { type: String },
   email: { type: String, unique: true },
   password: String,
@@ -21,8 +32,32 @@ const UserSchema = new mongoose.Schema({
   location: { type: String },
   bio: { type: String },
   age: { type: Number },
-  emergencyContacts: { type: Array, default: [] },
+  theme: {
+    type: String,
+    enum: ["light", "forest"],
+  },
+  emergencyContacts: {
+    type: [EmergencyContactSchema],
+    default: [],
+  },
   numTrips: { type: Number, default: 0},
+});
+
+UserSchema.index(
+  { userName: 1 },
+  { unique: true, collation: { locale: "en", strength: 2 } }
+);
+
+UserSchema.pre("validate", function dropInvalidContacts(next) {
+  if (!Array.isArray(this.emergencyContacts)) {
+    this.emergencyContacts = [];
+    return next();
+  }
+  this.emergencyContacts = this.emergencyContacts.filter((contact) => {
+    const name = contact && contact.name;
+    return typeof name === "string" && name.trim();
+  });
+  next();
 });
 
 // Password hash middleware.
@@ -57,4 +92,20 @@ UserSchema.methods.comparePassword = function comparePassword(
   });
 };
 
-module.exports = mongoose.model("User", UserSchema);
+const User = mongoose.model("User", UserSchema);
+
+async function syncUserIndexes() {
+  try {
+    await User.syncIndexes();
+  } catch (err) {
+    console.error("Failed to sync User indexes:", err.message);
+  }
+}
+
+if (mongoose.connection.readyState === 1) {
+  syncUserIndexes();
+} else {
+  mongoose.connection.once("connected", syncUserIndexes);
+}
+
+module.exports = User;
