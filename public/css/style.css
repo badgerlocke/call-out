@@ -3,6 +3,10 @@
 @tailwind utilities;
 
 /* Set transparent background image without affecting other elements' opacity*/
+.bkg {
+    isolation: isolate;
+}
+
 .bkg::before{
     content:"";
     opacity:0.5;
@@ -15,7 +19,7 @@
     left:0;
     width:100%;
     height:auto;
-    z-index:-3;
+    z-index:-1;
 }
 /* Serve different bkg images based on device size */
 

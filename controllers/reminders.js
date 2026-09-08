@@ -59,6 +59,7 @@ async function findLate() {
     const lateTrips = await Trips.find({
       checkedIn: false,
       sosSent: false,
+      notify: { $ne: false },
       notifyTime: {
         $lt: new Date()}
       })
@@ -76,6 +77,7 @@ async function findTripsDue() {
     const returningSoon = await Trips.find({
       checkedIn: false,
       reminderSent: false,
+      notify: { $ne: false },
       returnTime: {
         $lte: new Date()},
       notifyTime: {

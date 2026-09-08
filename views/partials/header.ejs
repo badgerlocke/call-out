@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="">
+<html lang="en" data-theme="forest">
   <head>
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
@@ -18,27 +18,35 @@
       crossorigin="anonymous">
     <link href="/css/output.css" rel="stylesheet">
   </head>
-  <!-- <body  class="m-0"> -->
-    <body class="bg-hero bg-no-repeat bg-cover bg-center bg-fixed">
-      <div>
-      <header class="m-6 flex items-center justify-center">
-        <div class="">
-          <img src="logo/logo-400px.png" alt="Call Out logo">
+  <body class="min-h-screen bg-base-300 text-base-content">
+    <header class="sticky top-0 z-20 border-b border-black/10 bg-white/95 text-neutral shadow-lg backdrop-blur">
+      <nav class="navbar container min-h-16 px-4" aria-label="Main navigation">
+        <div class="navbar-start">
+          <a href="<%= locals.user ? '/home' : '/' %>" class="rounded-lg focus:outline-none focus:ring-2 focus:ring-primary" aria-label="Call Out home">
+            <img class="w-36 sm:w-44" src="/logo/logo-400px.png" alt="Call Out">
+          </a>
         </div>
-        <div class="">
-          <%// if (user && user.profilePicture) { %> 
-            <!-- <img src="<%=//user.profilePicture%>" alt="profile picture"> -->
-          <!-- <%//} else {%> -->
-            <!-- <i class="fa fa-solid fa-tree text-5xl align-bottom mx-4"></i> -->
-          <!-- <%//}%> -->
-          <!-- <span class="mx-4 text-2xl align-middle"><%=// user.realName%></span> -->
-          <!-- <a href="/logout" class="btn btn-primary mx-4">Logout</a> -->
-        </div>
-      </header>
 
-        <!-- <h1 class="font-medium leading-tight text-5xl prose">  <i class="fa fa-solid fa-tree"></i> <a href="/home" class="no-underline">Call Out</a> <i class="fa fa-solid fa-tree"></i></h1> -->
-        <!-- <i class="fa fa-solid fa-mountain-sun"></i> -->
-        <!-- Subtitle ideas: -->
-        <!-- <span>Improving safety for outdoor enthusiasts</span> -->
-        <!-- <span>Be safe wherever you go</span> -->
-        <!-- <span>All trails eventually lead home</span> -->
+        <% if (locals.user) { %>
+          <div class="navbar-end gap-1 sm:gap-2">
+            <a href="/home" class="btn btn-ghost btn-sm hidden sm:inline-flex">My trips</a>
+            <a href="/trips/newtrip" class="btn btn-primary btn-sm">
+              <i class="fas fa-plus" aria-hidden="true"></i>
+              <span class="hidden sm:inline">New trip</span>
+            </a>
+            <div class="dropdown dropdown-end">
+              <button tabindex="0" class="btn btn-ghost btn-circle" aria-label="Open account menu">
+                <i class="fas fa-user" aria-hidden="true"></i>
+              </button>
+              <ul tabindex="0" class="menu dropdown-content z-30 mt-3 w-52 rounded-box bg-base-100 p-2 shadow-xl">
+                <li class="menu-title">
+                  <span><%= user.realName || user.userName || 'Account' %></span>
+                </li>
+                <li><a href="/home">My trips</a></li>
+                <li><a href="/logout">Log out</a></li>
+              </ul>
+            </div>
+          </div>
+        <% } %>
+      </nav>
+    </header>

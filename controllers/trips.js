@@ -1,6 +1,37 @@
 const Trip = require("../models/Trip");
 const User = require("../models/User")
 
+const UNIT_MS = {
+  minutes: 60 * 1000,
+  hours: 60 * 60 * 1000,
+  days: 24 * 60 * 60 * 1000,
+};
+
+//The form posts an exact instant in returnTime. The date/time pair is the
+//fallback for browsers that never ran the page script, and is parsed in the
+//server's time zone.
+function resolveReturnTime(body) {
+  if (body.returnTime) {
+    const fromBrowser = new Date(body.returnTime);
+    if (!isNaN(fromBrowser)) return fromBrowser;
+  }
+  if (!body.returnDate) return null;
+  const combined = new Date(`${body.returnDate}T${body.returnTimeOfDay || "23:59"}`);
+  return isNaN(combined) ? null : combined;
+}
+
+function wantsNotify(body) {
+  return body.notify === "true" || body.notify === "on";
+}
+
+function resolveNotifyTime(returnTime, body) {
+  if (!wantsNotify(body)) return null;
+  const amount = Number(body.notifyOffsetValue);
+  const unit = UNIT_MS[body.notifyOffsetUnit] || UNIT_MS.hours;
+  if (!returnTime || !Number.isFinite(amount) || amount <= 0) return null;
+  return new Date(returnTime.getTime() + amount * unit);
+}
+
 module.exports = {
   getHome: async (req, res) => {
     try {
@@ -58,8 +89,7 @@ module.exports = {
   },
   getNewTrip: async (req, res) => {
     try {
-      // const trips = await Trip.find({ user: req.user.id });
-      res.render("newtrip.ejs");
+      res.render("newtrip.ejs", { user: req.user });
     } catch (err) {
       console.log(err);
     }
@@ -83,14 +113,19 @@ module.exports = {
   createTrip: async (req, res) => {
     console.log(req.body)
     try {
+      const returnTime = resolveReturnTime(req.body);
+      if (!returnTime) {
+        console.log("Trip needs a return date and time");
+        return res.redirect("/trips/newtrip");
+      }
       await Trip.create({
         user: req.user.id,
         location: req.body.location,
         details: req.body.details,
         tripType: req.body.tripType,
-        returnTime: req.body.returnTime,
-        notifyTime: req.body.notifyTime,
-        notify: Boolean(req.body.notify),
+        returnTime: returnTime,
+        notifyTime: resolveNotifyTime(returnTime, req.body),
+        notify: wantsNotify(req.body),
       });
       console.log("Trip has been added!");
       res.redirect("/home");
