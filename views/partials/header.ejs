@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="forest">
+<html lang="en" data-theme="light">
   <head>
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
@@ -17,23 +17,30 @@
       integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w=="
       crossorigin="anonymous">
     <link href="/css/output.css" rel="stylesheet">
+    <script src="/js/theme.js"></script>
   </head>
   <body class="min-h-screen bg-base-300 text-base-content">
-    <header class="sticky top-0 z-20 border-b border-black/10 bg-white/95 text-neutral shadow-lg backdrop-blur">
+    <header class="sticky top-0 z-20 border-b border-base-content/15 bg-base-100/95 text-base-content shadow-lg backdrop-blur">
       <nav class="navbar container min-h-16 px-4" aria-label="Main navigation">
         <div class="navbar-start">
-          <a href="<%= locals.user ? '/home' : '/' %>" class="rounded-lg focus:outline-none focus:ring-2 focus:ring-primary" aria-label="Call Out home">
-            <img class="w-36 sm:w-44" src="/logo/logo-400px.png" alt="Call Out">
+          <a href="<%= locals.user ? '/home' : '/' %>" class="focus:outline-none focus:ring-2 focus:ring-primary" aria-label="Call Out home">
+            <img class="logo-light w-36 sm:w-44" src="/logo/logo-400px.png" alt="Call Out">
+            <img class="logo-dark w-36 sm:w-44" src="/logo/logo1/vector/default-monochrome-white.svg" alt="Call Out">
           </a>
         </div>
 
-        <% if (locals.user) { %>
-          <div class="navbar-end gap-1 sm:gap-2">
+        <div class="navbar-end gap-1 sm:gap-2">
+          <% if (locals.user) { %>
             <a href="/home" class="btn btn-ghost btn-sm hidden sm:inline-flex">My trips</a>
-            <a href="/trips/newtrip" class="btn btn-primary btn-sm">
+            <a href="/trips/newtrip" class="btn btn-primary btn-sm js-open-new-trip">
               <i class="fas fa-plus" aria-hidden="true"></i>
               <span class="hidden sm:inline">New trip</span>
             </a>
+          <% } %>
+
+          <%- include('theme-toggle') -%>
+
+          <% if (locals.user) { %>
             <div class="dropdown dropdown-end">
               <button tabindex="0" class="btn btn-ghost btn-circle" aria-label="Open account menu">
                 <i class="fas fa-user" aria-hidden="true"></i>
@@ -46,7 +53,11 @@
                 <li><a href="/logout">Log out</a></li>
               </ul>
             </div>
-          </div>
-        <% } %>
+          <% } %>
+        </div>
       </nav>
     </header>
+    <% if (locals.user) { %>
+      <%- include('new-trip-modal') %>
+      <script src="/js/newtrip.js"></script>
+    <% } %>

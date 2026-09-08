@@ -51,18 +51,5 @@ async function deleteTrip(){
 }
 
 
-
-// *************************
-// DARK MODE 
-// *************************
-
-// const checkbox =
-// document.getElementById('checkbox');
-
-// checkbox.addEventListener('change', () => {
-// // change the theme of the website
-
-// document.body.classList.toggle('dark');
-// });
-
+// Dark mode lives in theme.js, loaded from the page <head>.
 

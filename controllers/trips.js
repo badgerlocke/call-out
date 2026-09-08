@@ -88,11 +88,7 @@ module.exports = {
     }
   },
   getNewTrip: async (req, res) => {
-    try {
-      res.render("newtrip.ejs", { user: req.user });
-    } catch (err) {
-      console.log(err);
-    }
+    res.redirect("/home?newTrip=1");
   },
   getTemplate: async (req, res) => {
     try {
@@ -116,7 +112,7 @@ module.exports = {
       const returnTime = resolveReturnTime(req.body);
       if (!returnTime) {
         console.log("Trip needs a return date and time");
-        return res.redirect("/trips/newtrip");
+        return res.redirect("/home?newTrip=1");
       }
       await Trip.create({
         user: req.user.id,

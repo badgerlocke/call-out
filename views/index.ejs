@@ -1,18 +1,23 @@
 <%- include('partials/header-no-logo') -%>
-  <main class="bkg bkg-sunset"></main>
+  <main class="bkg bkg-sunset">
     <section class="h-full gradient-form  md:h-screen">
       <div class="container py-12 px-6 h-full">
-        <div class="flex justify-center items-center flex-wrap h-full g-6 text-gray-800">
+        <div class="flex justify-center items-center flex-wrap h-full g-6 text-base-content">
           <div class="xl:w-10/12">
-            <div class="block bg-white bg-opacity-50 shadow-lg rounded-lg">
+            <div class="block bg-base-100/90 shadow-lg">
               <div class="lg:flex lg:flex-wrap g-0">
                 <div class="lg:w-6/12 px-4 md:px-0">
                   <div class="md:p-12 md:mx-6">
                     <div class="text-center">
                       <img
-                        class="mx-auto w-48"
-                        src="logo/logo-400px.png"
-                        alt="logo"
+                        class="logo-light mx-auto w-48"
+                        src="/logo/logo-400px.png"
+                        alt="Call Out"
+                      />
+                      <img
+                        class="logo-dark mx-auto w-48"
+                        src="/logo/logo1/vector/default-monochrome-white.svg"
+                        alt="Call Out"
                       />
                     </div>
                     <form action="/login" method="POST">
@@ -20,7 +25,7 @@
                       <div class="mb-4">
                         <input
                           type="email"
-                          class="form-control block w-full px-3 py-1.5 text-base font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none"
+                          class="input input-bordered w-full"
                           id="exampleInputEmail1"
                           placeholder="Email"
                           name="email"
@@ -30,7 +35,7 @@
                       <div class="mb-4">
                         <input
                           type="password"
-                          class="form-control block w-full px-3 py-1.5 text-base font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none"
+                          class="input input-bordered w-full"
                           id="exampleFormControlInput1"
                           placeholder="Password"
                           id="exampleInputPassword1"
@@ -58,7 +63,7 @@
                           <i class="fab fa-google left px-3"></i> Log In With Google
                          </a></h2>
                         </div>
-                        <a class="text-gray-500" href="#!">Forgot password?</a>
+                        <a class="text-base-content/60" href="#!">Forgot password?</a>
                       </div>
                       <div class="flex items-center justify-between pb-6">
                         <p class="mb-0 mr-2">Don't have an account?</p>

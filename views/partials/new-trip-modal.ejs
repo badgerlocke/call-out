@@ -1,0 +1,171 @@
+<dialog id="new-trip-modal" class="modal" aria-labelledby="new-trip-modal-title">
+  <div class="modal-box flex max-h-[90vh] max-w-lg flex-col overflow-y-auto p-0">
+    <form method="dialog">
+      <button type="submit" class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2 z-10" aria-label="Close">✕</button>
+    </form>
+
+    <form action="/trips/createTrip" method="POST" id="newTripForm" data-mode="wizard" class="flex min-h-[24rem] flex-col">
+      <div id="new-trip-wizard" class="flex flex-1 flex-col">
+        <section data-wizard-step="type" class="flex flex-1 flex-col p-6 pb-4">
+          <h2 id="new-trip-modal-title" class="pr-8 text-2xl font-bold">What kind of trip are you planning?</h2>
+          <div class="mt-5 grid grid-cols-2 gap-2">
+            <% ["Hiking", "Camping", "Backpacking", "Climbing", "Caving", "Other"].forEach(function (type) { %>
+              <button type="button" class="btn btn-outline js-trip-type" data-value="<%= type %>"><%= type %></button>
+            <% }) %>
+          </div>
+          <div class="mt-6 flex items-center justify-end">
+            <button type="button" class="btn btn-primary js-wizard-next" disabled>Continue</button>
+          </div>
+          <div class="mt-auto flex justify-end pt-8">
+            <button type="button" class="js-skip-wizard text-xs text-base-content/50 underline-offset-2 hover:text-base-content/80 hover:underline">
+              Skip questions
+            </button>
+          </div>
+        </section>
+
+        <section data-wizard-step="date" hidden class="flex flex-1 flex-col p-6">
+          <h2 class="pr-8 text-2xl font-bold">What date will you return?</h2>
+          <div class="mt-5 flex flex-col gap-2">
+            <button type="button" class="btn btn-outline js-return-date" data-value="today">Today</button>
+            <button type="button" class="btn btn-outline js-return-date" data-value="other">Other date</button>
+          </div>
+          <label class="form-control mt-4 hidden" data-other-date>
+            <span class="label-text mb-2">Choose a date</span>
+            <input type="date" class="input input-bordered w-full max-w-xs" data-wizard="otherDate">
+          </label>
+          <div class="mt-6 flex items-center justify-between">
+            <button type="button" class="btn btn-ghost js-wizard-back">Back</button>
+            <button type="button" class="btn btn-primary js-wizard-next" disabled>Continue</button>
+          </div>
+        </section>
+
+        <section data-wizard-step="time" hidden class="flex flex-1 flex-col p-6">
+          <h2 class="pr-8 text-2xl font-bold">What time will you return?</h2>
+          <label class="form-control mt-5">
+            <span class="label-text mb-2">Expected return time</span>
+            <input type="time" class="input input-bordered w-full max-w-xs" data-wizard="time">
+          </label>
+          <div class="mt-6 flex items-center justify-between">
+            <button type="button" class="btn btn-ghost js-wizard-back">Back</button>
+            <button type="button" class="btn btn-primary js-wizard-next" disabled>Continue</button>
+          </div>
+        </section>
+
+        <section data-wizard-step="notify" hidden class="flex flex-1 flex-col p-6">
+          <h2 class="pr-8 text-2xl font-bold">Should we contact your contacts if you don't check in?</h2>
+          <div class="mt-5 flex flex-col gap-2">
+            <button type="button" class="btn btn-outline js-notify-choice" data-value="yes">Yes</button>
+            <button type="button" class="btn btn-outline js-notify-choice" data-value="no">No</button>
+          </div>
+          <div class="mt-6 flex items-center justify-between">
+            <button type="button" class="btn btn-ghost js-wizard-back">Back</button>
+            <button type="button" class="btn btn-primary js-wizard-next" disabled>Continue</button>
+          </div>
+        </section>
+
+        <section data-wizard-step="notifyWhen" hidden class="flex flex-1 flex-col p-6">
+          <h2 class="pr-8 text-2xl font-bold">When should we contact them?</h2>
+          <p class="mt-2 text-sm text-base-content/70">How long after your expected return should we reach your emergency contacts?</p>
+          <div class="join mt-5">
+            <input type="number" min="1" step="1" value="2" class="input input-bordered join-item w-24" data-wizard="offsetValue">
+            <select class="select select-bordered join-item" data-wizard="offsetUnit">
+              <option value="minutes">Minutes</option>
+              <option value="hours" selected>Hours</option>
+              <option value="days">Days</option>
+            </select>
+          </div>
+          <p class="mt-3 text-sm text-base-content/70" data-wizard="notifyPreview"></p>
+          <div class="mt-6 flex items-center justify-between">
+            <button type="button" class="btn btn-ghost js-wizard-back">Back</button>
+            <button type="button" class="btn btn-primary js-wizard-next">Continue</button>
+          </div>
+        </section>
+
+        <section data-wizard-step="place" hidden class="flex flex-1 flex-col p-6">
+          <h2 class="pr-8 text-2xl font-bold">Where are you going?</h2>
+          <label class="form-control mt-5">
+            <span class="label-text mb-2">Location</span>
+            <input type="text" class="input input-bordered input-primary w-full" data-wizard="location" autocomplete="off">
+          </label>
+          <label class="form-control mt-4">
+            <span class="label-text mb-2">Details (optional)</span>
+            <textarea class="textarea textarea-bordered w-full" rows="3" data-wizard="details"></textarea>
+          </label>
+          <div class="mt-6 flex items-center justify-between">
+            <button type="button" class="btn btn-ghost js-wizard-back">Back</button>
+            <button type="submit" class="btn btn-primary">Create trip</button>
+          </div>
+        </section>
+      </div>
+
+      <div id="new-trip-full" hidden class="p-6">
+        <h2 class="pr-8 text-2xl font-bold">New trip</h2>
+
+        <label class="label">
+          <span class="label-text">Where are you going?</span>
+        </label>
+        <input type="text" class="input input-bordered input-primary w-full" id="location" name="location">
+
+        <label class="label">
+          <span class="label-text">Details</span>
+        </label>
+        <textarea class="textarea textarea-bordered w-full" id="details" name="details"></textarea>
+
+        <div class="form-control">
+          <label class="label" for="returnDate">
+            <span class="label-text">When do you expect to return?</span>
+          </label>
+          <div class="flex flex-wrap gap-2">
+            <input type="date" class="input input-bordered" id="returnDate" name="returnDate" required>
+            <input type="time" class="input input-bordered" id="returnTimeOfDay" name="returnTimeOfDay" required>
+          </div>
+          <input type="hidden" id="returnTime" name="returnTime">
+        </div>
+
+        <div class="form-control">
+          <label class="label w-fit cursor-pointer justify-start gap-3">
+            <input type="checkbox" checked class="checkbox checkbox-primary" id="notify" name="notify" value="true">
+            <span class="label-text">Notify my contacts if I don't check in</span>
+          </label>
+        </div>
+
+        <div class="form-control" id="notifyFields">
+          <label class="label" for="notifyOffsetValue">
+            <span class="label-text">How long after your expected return time should we notify your emergency contacts?</span>
+          </label>
+          <div class="join">
+            <input type="number" min="1" step="1" value="2" class="input input-bordered join-item w-24" id="notifyOffsetValue" name="notifyOffsetValue" required>
+            <select class="select select-bordered join-item" id="notifyOffsetUnit" name="notifyOffsetUnit">
+              <option value="minutes">Minutes</option>
+              <option value="hours" selected>Hours</option>
+              <option value="days">Days</option>
+            </select>
+          </div>
+          <label class="label">
+            <span class="label-text-alt" id="notifyPreview"></span>
+          </label>
+        </div>
+
+        <div class="form-control w-full">
+          <label class="label">
+            <span class="label-text">What kind of trip are you going on?</span>
+          </label>
+          <select class="select select-bordered w-full" id="tripType" name="tripType">
+            <option disabled selected>Pick one</option>
+            <option>Hiking</option>
+            <option>Camping</option>
+            <option>Backpacking</option>
+            <option>Climbing</option>
+            <option>Caving</option>
+            <option>Other</option>
+          </select>
+        </div>
+
+        <button type="submit" class="btn btn-primary mt-6">Submit</button>
+      </div>
+    </form>
+  </div>
+  <form method="dialog" class="modal-backdrop">
+    <button>close</button>
+  </form>
+</dialog>

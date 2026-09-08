@@ -1,36 +1,36 @@
 <%- include('partials/header') -%>
 
-<main class="container">
+<main class="container max-w-xl px-4 py-10">
   <div class="">
     <section class="">
       <% if (locals.messages.errors) { %> <% messages.errors.forEach( el => { %>
-      <div class="alert alert-danger"><%= el.msg %></div>
+      <div class="alert alert-error"><%= el.msg %></div>
       <% }) %> <% } %> <% if (locals.messages.info) { %> <%
       messages.info.forEach( el => { %>
       <div class="alert alert-info"><%= el.msg %></div>
       <% }) %> <% } %>
-      <div class="divider my-5"></div>
+      <h1 class="mb-6 text-3xl font-bold">Log in</h1>
       <!-- <h2><a href="/auth/google" class="btn btn-primary">
           <i class="fab fa-google left"></i> Log In With Google
       </a></h2> -->
-      <form action="/login" method="POST">
+      <form action="/login" method="POST" class="space-y-4">
         <div class="">
-          <label for="exampleInputEmail1" class="form-label"
+          <label for="exampleInputEmail1" class="label-text"
             >Email address</label
           >
           <input
             type="email"
-            class="form-control"
+            class="input input-bordered w-full"
             id="exampleInputEmail1"
             aria-describedby="emailHelp"
             name="email"
           />
         </div>
         <div class="">
-          <label for="exampleInputPassword1" class="form-label">Password</label>
+          <label for="exampleInputPassword1" class="label-text">Password</label>
           <input
             type="password"
-            class="form-control"
+            class="input input-bordered w-full"
             id="exampleInputPassword1"
             name="password"
           />
