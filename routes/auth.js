@@ -11,9 +11,9 @@ router.get('/google', passport.authenticate('google', { scope: ['profile','email
 // @route   GET /auth/google/callback
 router.get(
   '/google/callback',
-  passport.authenticate('google', { failureRedirect: '/' }),
+  passport.authenticate('google', { failureRedirect: '/login' }),
   (req, res) => {
-    res.redirect('/home')
+    res.redirect('/')
   }
 )
 

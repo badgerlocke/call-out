@@ -1,14 +1,17 @@
 const express = require("express");
 const router = express.Router();
 const authController = require("../controllers/auth");
-const homeController = require("../controllers/home");
 const tripsController = require("../controllers/trips");
-const { ensureAuth, ensureGuest } = require("../middleware/auth");
+const { ensureAuth } = require("../middleware/auth");
 
 //Main Routes
-router.get("/", homeController.getIndex);
+router.get("/", ensureAuth, tripsController.getHome);
+router.get("/home", (req, res) => {
+  const queryIndex = req.originalUrl.indexOf("?");
+  const query = queryIndex === -1 ? "" : req.originalUrl.slice(queryIndex);
+  res.redirect(`/${query}`);
+});
 router.get("/profile", ensureAuth, tripsController.getProfile);
-router.get("/home", ensureAuth, tripsController.getHome);
 router.get("/feed", ensureAuth, tripsController.getFeed);
 router.get("/mytrips", tripsController.getMyTrips);
 

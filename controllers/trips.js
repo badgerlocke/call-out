@@ -88,7 +88,7 @@ module.exports = {
     }
   },
   getNewTrip: async (req, res) => {
-    res.redirect("/home?newTrip=1");
+    res.redirect("/?newTrip=1");
   },
   getTemplate: async (req, res) => {
     try {
@@ -112,7 +112,7 @@ module.exports = {
       const returnTime = resolveReturnTime(req.body);
       if (!returnTime) {
         console.log("Trip needs a return date and time");
-        return res.redirect("/home?newTrip=1");
+        return res.redirect("/?newTrip=1");
       }
       await Trip.create({
         user: req.user.id,
@@ -124,29 +124,32 @@ module.exports = {
         notify: wantsNotify(req.body),
       });
       console.log("Trip has been added!");
-      res.redirect("/home");
+      res.redirect("/");
     } catch (err) {
       console.log(err);
-      res.redirect("/home")
+      res.redirect("/")
     }
   },
   checkIn: async (req, res) => {
     try {
-      let trip = await Trip.findById(req.params.id);
+      const trip = await Trip.findOne({ _id: req.params.id, user: req.user.id });
+      if (!trip) {
+        return res.redirect("/");
+      }
       if (trip.checkedIn) {
         //If user has already checked in, yell at them. This check becomes unnecessary if checkin button is only displayed for active trips.
         console.log("You're already checked in.")
-        res.redirect(`/home`);
+        res.redirect(`/`);
       } else {
         //Otherwise, check in
         await Trip.findOneAndUpdate(
-          { _id: req.params.id },
+          { _id: req.params.id, user: req.user.id },
           {
             checkedIn: true
           }
         );
         console.log("Checked in");
-        res.redirect(`/home`);
+        res.redirect(`/`);
       }
     } catch (err) {
       console.log(err);
@@ -154,11 +157,11 @@ module.exports = {
   },
   deleteTrip: async (req, res) => {
     try {
-      await Trip.deleteOne({ _id: req.params.id });
+      await Trip.deleteOne({ _id: req.params.id, user: req.user.id });
       console.log("Deleted Trip");
-      res.redirect("/home");
+      res.redirect("/");
     } catch (err) {
-      res.redirect("/home");
+      res.redirect("/");
     }
   },
 };

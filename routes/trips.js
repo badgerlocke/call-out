@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const tripsController = require("../controllers/trips");
-const { ensureAuth, ensureGuest } = require("../middleware/auth");
+const { ensureAuth } = require("../middleware/auth");
 //Enable SMS reminders if Twilio acount info is available
 if (process.env.TWILIO_ACCOUNT_SID) {
     const enableReminders = require('../controllers/reminders')
@@ -13,11 +13,11 @@ if (process.env.TWILIO_ACCOUNT_SID) {
 // router.get("/:id", ensureAuth, tripsController.getTrip); This is interfering with the line below
 router.get("/newtrip", ensureAuth, tripsController.getNewTrip);
 
-router.post("/createTrip", tripsController.createTrip);
+router.post("/createTrip", ensureAuth, tripsController.createTrip);
 
-router.put("/checkIn/:id", tripsController.checkIn)
+router.put("/checkIn/:id", ensureAuth, tripsController.checkIn)
 
-router.delete("/deleteTrip/:id", tripsController.deleteTrip);
+router.delete("/deleteTrip/:id", ensureAuth, tripsController.deleteTrip);
 
 
 module.exports = router;

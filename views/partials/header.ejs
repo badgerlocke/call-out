@@ -23,7 +23,7 @@
     <header class="sticky top-0 z-20 border-b border-base-content/15 bg-base-100/95 text-base-content shadow-lg backdrop-blur">
       <nav class="navbar container min-h-16 px-4" aria-label="Main navigation">
         <div class="navbar-start">
-          <a href="<%= locals.user ? '/home' : '/' %>" class="focus:outline-none focus:ring-2 focus:ring-primary" aria-label="Call Out home">
+          <a href="/" class="focus:outline-none focus:ring-2 focus:ring-primary" aria-label="Call Out home">
             <img class="logo-light w-36 sm:w-44" src="/logo/logo-400px.png" alt="Call Out">
             <img class="logo-dark w-36 sm:w-44" src="/logo/logo1/vector/default-monochrome-white.svg" alt="Call Out">
           </a>
@@ -31,7 +31,7 @@
 
         <div class="navbar-end gap-1 sm:gap-2">
           <% if (locals.user) { %>
-            <a href="/home" class="btn btn-ghost btn-sm hidden sm:inline-flex">My trips</a>
+            <a href="/" class="btn btn-ghost btn-sm hidden sm:inline-flex">My trips</a>
             <a href="/trips/newtrip" class="btn btn-primary btn-sm js-open-new-trip">
               <i class="fas fa-plus" aria-hidden="true"></i>
               <span class="hidden sm:inline">New trip</span>
@@ -49,7 +49,7 @@
                 <li class="menu-title">
                   <span><%= user.realName || user.userName || 'Account' %></span>
                 </li>
-                <li><a href="/home">My trips</a></li>
+                <li><a href="/">My trips</a></li>
                 <li><a href="/logout">Log out</a></li>
               </ul>
             </div>
