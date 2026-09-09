@@ -10,6 +10,7 @@ router.get("/", settingsController.getSettings);
 router.put("/profile", settingsController.updateProfile);
 router.put("/password", settingsController.updatePassword);
 router.put("/theme", settingsController.updateTheme);
+router.put("/privacy", settingsController.updatePrivacy);
 router.post("/contacts", settingsController.createContact);
 router.put("/contacts/:contactId", settingsController.updateContact);
 router.delete("/contacts/:contactId", settingsController.deleteContact);

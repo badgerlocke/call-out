@@ -12,6 +12,7 @@ const RESERVED = new Set([
   "callout",
   "call_out",
   "feed",
+  "friends",
   "help",
   "home",
   "login",
@@ -30,7 +31,12 @@ const RESERVED = new Set([
 ]);
 
 function escapeRegex(value) {
-  return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  return String(value).replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
+function userNameMatchRegex(userName, { prefix = false } = {}) {
+  const escaped = escapeRegex(userName);
+  return new RegExp(`^${escaped}${prefix ? "" : "$"}`, "i");
 }
 
 // "Sage Williams" -> "sage_williams"; accents are folded so the handle stays ASCII.
@@ -49,7 +55,7 @@ function slugifyUserName(value) {
 // Case-insensitive so legacy mixed-case handles still count as taken.
 async function isUserNameTaken(userName, excludeUserId) {
   const query = {
-    userName: { $regex: new RegExp(`^${escapeRegex(userName)}$`, "i") },
+    userName: { $regex: userNameMatchRegex(userName) },
   };
   if (excludeUserId) {
     query._id = { $ne: excludeUserId };
@@ -92,8 +98,10 @@ async function uniqueUserName(baseName) {
 module.exports = {
   MAX_LENGTH,
   MIN_LENGTH,
+  escapeRegex,
   isUserNameTaken,
   slugifyUserName,
   uniqueUserName,
+  userNameMatchRegex,
   validateUserName,
 };

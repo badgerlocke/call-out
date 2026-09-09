@@ -4,7 +4,7 @@
       <button type="submit" class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2 z-10" aria-label="Close">✕</button>
     </form>
 
-    <form action="/trips/createTrip" method="POST" id="newTripForm" data-mode="wizard" class="flex min-h-[24rem] flex-col">
+    <form action="/trips/createTrip" method="POST" id="newTripForm" data-mode="wizard" data-visibility-default="<%= user.tripVisibilityDefault === 'friends' ? 'friends' : 'private' %>" class="flex min-h-[24rem] flex-col">
       <div class="alert alert-info mx-6 mt-6 w-auto text-sm" role="note">
         <span>In this demo, we email you if you miss check-in. We do not message your contacts yet.</span>
       </div>
@@ -96,6 +96,21 @@
           </label>
           <div class="mt-6 flex items-center justify-between">
             <button type="button" class="btn btn-ghost js-wizard-back">Back</button>
+            <button type="button" class="btn btn-primary js-wizard-next">Continue</button>
+          </div>
+        </section>
+
+        <section data-wizard-step="visibility" hidden class="flex flex-1 flex-col p-6">
+          <h2 class="pr-8 text-2xl font-bold">Who can see this trip?</h2>
+          <p class="mt-2 text-sm text-base-content/70">
+            Private trips stay on your dashboard. Friends-visible trips show your location, return time, and check-in status to people you have accepted as friends.
+          </p>
+          <div class="mt-5 flex flex-col gap-2">
+            <button type="button" class="btn btn-outline js-visibility-choice" data-value="private">Only me</button>
+            <button type="button" class="btn btn-outline js-visibility-choice" data-value="friends">Friends</button>
+          </div>
+          <div class="mt-6 flex items-center justify-between">
+            <button type="button" class="btn btn-ghost js-wizard-back">Back</button>
             <button type="submit" class="btn btn-primary">Create trip</button>
           </div>
         </section>
@@ -163,6 +178,18 @@
             <option>Other</option>
           </select>
         </div>
+
+        <fieldset class="form-control mt-4">
+          <legend class="label-text mb-2">Who can see this trip?</legend>
+          <label class="label w-fit cursor-pointer justify-start gap-3">
+            <input type="radio" class="radio radio-primary" name="visibility" id="visibilityPrivate" value="private" <%= !user.tripVisibilityDefault || user.tripVisibilityDefault === 'private' ? 'checked' : '' %>>
+            <span class="label-text">Only me</span>
+          </label>
+          <label class="label w-fit cursor-pointer justify-start gap-3">
+            <input type="radio" class="radio radio-primary" name="visibility" id="visibilityFriends" value="friends" <%= user.tripVisibilityDefault === 'friends' ? 'checked' : '' %>>
+            <span class="label-text">Friends</span>
+          </label>
+        </fieldset>
 
         <button type="submit" class="btn btn-primary mt-6">Submit</button>
       </div>

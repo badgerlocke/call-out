@@ -76,3 +76,23 @@ test("security headers send a script-src self CSP", () => {
   assert.equal(headers["X-Frame-Options"], "DENY");
   assert.equal(continued, true);
 });
+
+test("friend rows escape attacker-controlled names", () => {
+  const file = path.join(__dirname, "../views/partials/friend-row.ejs");
+  const html = ejs.render(
+    fs.readFileSync(file, "utf8"),
+    {
+      showProfileLink: true,
+      person: {
+        userName: XSS,
+        realName: XSS,
+        relation: "none",
+      },
+    },
+    { filename: file }
+  );
+
+  assert.equal(html.includes("<img"), false);
+  assert.equal(html.includes("<script>"), false);
+  assert.match(html, /&lt;img/);
+});

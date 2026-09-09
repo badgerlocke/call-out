@@ -43,7 +43,12 @@ const TripSchema = new mongoose.Schema({
   sosSent: {
     type: Boolean,
     default: false
-  }
+  },
+  visibility: {
+    type: String,
+    enum: ["private", "friends"],
+    default: "private",
+  },
   // participants: {
   //   type: Array,
   //   default: []

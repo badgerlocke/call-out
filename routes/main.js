@@ -14,7 +14,7 @@ router.get("/home", (req, res) => {
 });
 router.get("/profile", ensureAuth, (req, res) => res.redirect("/settings"));
 router.get("/feed", ensureAuth, tripsController.getFeed);
-router.get("/mytrips", tripsController.getMyTrips);
+router.get("/mytrips", ensureAuth, tripsController.getMyTrips);
 
 //Routes for user login/signup
 router.get("/login", authController.getLogin);
@@ -27,7 +27,6 @@ router.post("/forgot-password", authPostLimit, authController.postForgotPassword
 router.get("/reset-password/:token", authController.getResetPassword);
 router.post("/reset-password/:token", authPostLimit, authController.postResetPassword);
 
-//Testing
-router.get("/template", tripsController.getTemplate);
+router.get("/template", ensureAuth, (req, res) => res.redirect("/"));
 
 module.exports = router;

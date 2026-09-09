@@ -1,0 +1,37 @@
+<article class="flex flex-col gap-3 rounded-2xl border border-base-content/15 bg-base-100 p-4 sm:flex-row sm:items-center sm:justify-between">
+  <div class="min-w-0">
+    <% if (showProfileLink && person.userName) { %>
+      <a href="/friends/u/<%= person.userName %>" class="font-bold hover:underline">
+        <%= person.realName || person.userName %>
+      </a>
+    <% } else { %>
+      <p class="font-bold"><%= person.realName || person.userName %></p>
+    <% } %>
+    <p class="text-sm text-base-content/60">@<%= person.userName %></p>
+  </div>
+  <div class="flex flex-wrap gap-2">
+    <% if (person.relation === 'incoming') { %>
+      <form action="/friends/<%= person.friendshipId %>/accept" method="POST">
+        <button type="submit" class="btn btn-primary btn-sm">Accept</button>
+      </form>
+      <form action="/friends/<%= person.friendshipId %>/decline" method="POST">
+        <button type="submit" class="btn btn-ghost btn-sm">Decline</button>
+      </form>
+    <% } else if (person.relation === 'outgoing') { %>
+      <span class="badge badge-outline">Pending</span>
+      <form action="/friends/<%= person.friendshipId %>/cancel" method="POST">
+        <button type="submit" class="btn btn-ghost btn-sm">Cancel</button>
+      </form>
+    <% } else if (person.relation === 'friends') { %>
+      <span class="badge badge-success badge-outline">Friends</span>
+      <form action="/friends/<%= person.friendshipId %>/unfriend" method="POST" data-confirm="Remove this friend? They will no longer see trips you share.">
+        <button type="submit" class="btn btn-ghost btn-sm text-error">Unfriend</button>
+      </form>
+    <% } else { %>
+      <form action="/friends/request" method="POST">
+        <input type="hidden" name="userName" value="<%= person.userName %>">
+        <button type="submit" class="btn btn-primary btn-sm">Add friend</button>
+      </form>
+    <% } %>
+  </div>
+</article>

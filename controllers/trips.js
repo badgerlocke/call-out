@@ -1,5 +1,10 @@
 const Trip = require("../models/Trip");
 const { plainText } = require("../utils/html");
+const {
+  acceptedFriendIds,
+  friendsFeedQuery,
+  resolveTripVisibility,
+} = require("../utils/friends");
 
 const TRIP_TYPES = new Set([
   "Hiking",
@@ -57,12 +62,22 @@ module.exports = {
       console.log(err);
     }
   },
-  getFeed: async (req, res) => {
+  getFeed: async (req, res, next) => {
     try {
-      const trips = await Trip.find().sort({ createdAt: "desc" }).lean();
-      res.render("feed.ejs", { trips: trips, user: req.user });
+      const friendIds = await acceptedFriendIds(req.user.id);
+      const trips = friendIds.length
+        ? await Trip.find(friendsFeedQuery(friendIds))
+            .sort({ createdAt: "desc" })
+            .populate("user", "userName realName")
+            .lean()
+        : [];
+      res.render("feed.ejs", {
+        trips,
+        user: req.user,
+        friendCount: friendIds.length,
+      });
     } catch (err) {
-      console.log(err);
+      return next(err);
     }
   },
   getMyTrips: async (req, res) => {
@@ -83,14 +98,6 @@ module.exports = {
   },
   getNewTrip: async (req, res) => {
     res.redirect("/?newTrip=1");
-  },
-  getTemplate: async (req, res) => {
-    try {
-      const trips = await Trip.find().sort({ createdAt: "desc" }).lean();
-      res.render("template.ejs", { trips: trips });
-    } catch (err) {
-      console.log(err);
-    }
   },
   getTrip: async (req, res) => {
     try {
@@ -123,6 +130,10 @@ module.exports = {
         returnTime: returnTime,
         notifyTime: resolveNotifyTime(returnTime, req.body),
         notify: wantsNotify(req.body),
+        visibility: resolveTripVisibility(
+          req.body.visibility,
+          req.user.tripVisibilityDefault
+        ),
       });
       console.log("Trip has been added!");
       res.redirect("/");
@@ -162,6 +173,21 @@ module.exports = {
       console.log("Deleted Trip");
       res.redirect("/");
     } catch (err) {
+      res.redirect("/");
+    }
+  },
+  updateVisibility: async (req, res) => {
+    try {
+      if (req.body.visibility !== "private" && req.body.visibility !== "friends") {
+        return res.redirect("/");
+      }
+      await Trip.updateOne(
+        { _id: req.params.id, user: req.user.id },
+        { $set: { visibility: req.body.visibility } }
+      );
+      res.redirect("/");
+    } catch (err) {
+      console.log(err);
       res.redirect("/");
     }
   },

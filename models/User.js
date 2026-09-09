@@ -38,6 +38,11 @@ const UserSchema = new mongoose.Schema({
     type: String,
     enum: ["light", "forest"],
   },
+  tripVisibilityDefault: {
+    type: String,
+    enum: ["private", "friends"],
+    default: "private",
+  },
   emergencyContacts: {
     type: [EmergencyContactSchema],
     default: [],

@@ -87,12 +87,14 @@ function bindNewTripWizard(form, helpers) {
     const full = form.querySelector('#new-trip-full')
     if (!wizard || !full) return
 
-    const steps = ['type', 'date', 'time', 'notify', 'notifyWhen', 'place']
+    const steps = ['type', 'date', 'time', 'notify', 'notifyWhen', 'place', 'visibility']
     let stepIndex = 0
+    const visibilityDefault = form.dataset.visibilityDefault === 'friends' ? 'friends' : 'private'
     const state = {
         tripType: '',
         dateChoice: '',
-        notify: null
+        notify: null,
+        visibility: visibilityDefault
     }
 
     const otherDateWrap = wizard.querySelector('[data-other-date]')
@@ -112,7 +114,9 @@ function bindNewTripWizard(form, helpers) {
         returnTimeOfDay: form.querySelector('#returnTimeOfDay'),
         notify: form.querySelector('#notify'),
         offsetValue: form.querySelector('#notifyOffsetValue'),
-        offsetUnit: form.querySelector('#notifyOffsetUnit')
+        offsetUnit: form.querySelector('#notifyOffsetUnit'),
+        visibilityPrivate: form.querySelector('#visibilityPrivate'),
+        visibilityFriends: form.querySelector('#visibilityFriends')
     }
 
     function currentStepName() {
@@ -154,6 +158,10 @@ function bindNewTripWizard(form, helpers) {
 
         named.offsetValue.value = offsetValue.value
         named.offsetUnit.value = offsetUnit.value
+        if (named.visibilityPrivate && named.visibilityFriends) {
+            named.visibilityFriends.checked = state.visibility === 'friends'
+            named.visibilityPrivate.checked = state.visibility !== 'friends'
+        }
         helpers.update()
     }
 
@@ -175,6 +183,8 @@ function bindNewTripWizard(form, helpers) {
         if (step === 'time') return Boolean(timeInput.value)
         if (step === 'notify') return state.notify === true || state.notify === false
         if (step === 'notifyWhen') return Number(offsetValue.value) > 0
+        if (step === 'place') return Boolean(locationInput.value.trim())
+        if (step === 'visibility') return state.visibility === 'private' || state.visibility === 'friends'
         return true
     }
 
@@ -192,6 +202,9 @@ function bindNewTripWizard(form, helpers) {
         }
         refreshStepButtons()
         if (currentStepName() === 'notifyWhen') updateWizardPreview()
+        if (currentStepName() === 'visibility') {
+            setSelected(wizard.querySelectorAll('.js-visibility-choice'), state.visibility)
+        }
     }
 
     function nextStep() {
@@ -242,6 +255,7 @@ function bindNewTripWizard(form, helpers) {
         state.tripType = ''
         state.dateChoice = ''
         state.notify = null
+        state.visibility = visibilityDefault
         otherDateInput.value = ''
         otherDateWrap.classList.add('hidden')
         timeInput.value = ''
@@ -260,6 +274,7 @@ function bindNewTripWizard(form, helpers) {
         setSelected(wizard.querySelectorAll('.js-trip-type'), '')
         setSelected(wizard.querySelectorAll('.js-return-date'), '')
         setSelected(wizard.querySelectorAll('.js-notify-choice'), '')
+        setSelected(wizard.querySelectorAll('.js-visibility-choice'), state.visibility)
         showWizard()
         helpers.update()
     }
@@ -289,11 +304,20 @@ function bindNewTripWizard(form, helpers) {
 
     otherDateInput.addEventListener('input', refreshStepButtons)
     timeInput.addEventListener('input', refreshStepButtons)
+    locationInput.addEventListener('input', refreshStepButtons)
 
     wizard.querySelectorAll('.js-notify-choice').forEach((btn) => {
         btn.addEventListener('click', () => {
             state.notify = btn.dataset.value === 'yes'
             setSelected(wizard.querySelectorAll('.js-notify-choice'), btn.dataset.value)
+            refreshStepButtons()
+        })
+    })
+
+    wizard.querySelectorAll('.js-visibility-choice').forEach((btn) => {
+        btn.addEventListener('click', () => {
+            state.visibility = btn.dataset.value
+            setSelected(wizard.querySelectorAll('.js-visibility-choice'), state.visibility)
             refreshStepButtons()
         })
     })
@@ -313,7 +337,7 @@ function bindNewTripWizard(form, helpers) {
 
     form.addEventListener('submit', (event) => {
         if (form.dataset.mode !== 'wizard') return
-        if (currentStepName() !== 'place') {
+        if (currentStepName() !== 'visibility') {
             event.preventDefault()
             return
         }

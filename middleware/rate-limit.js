@@ -13,6 +13,20 @@ const authPostLimit = rateLimit({
   },
 });
 
+const friendRequestLimit = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  limit: 20,
+  standardHeaders: "draft-7",
+  legacyHeaders: false,
+  handler: (req, res) => {
+    req.flash("errors", {
+      msg: "Too many friend requests. Please wait 15 minutes and try again.",
+    });
+    res.redirect("/friends");
+  },
+});
+
 module.exports = {
   authPostLimit,
+  friendRequestLimit,
 };

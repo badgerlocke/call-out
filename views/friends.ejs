@@ -1,0 +1,108 @@
+<%- include('partials/header') -%>
+
+<main class="container max-w-5xl px-4 py-8 sm:py-12">
+  <div class="mb-8">
+    <p class="text-sm font-semibold uppercase tracking-widest text-primary">Friends</p>
+    <h1 class="mt-1 text-3xl font-bold sm:text-4xl">People you trust</h1>
+    <p class="mt-2 max-w-2xl text-base-content/70">
+      Friends can see trips you share with them, including whether you are still out, overdue, or checked in.
+      Private trips stay yours alone.
+    </p>
+  </div>
+
+  <section class="card border border-base-content/15 bg-base-100 shadow">
+    <div class="card-body">
+      <h2 class="card-title">Find someone</h2>
+      <form action="/friends" method="GET" class="mt-2 flex flex-col gap-3 sm:flex-row">
+        <label class="input input-bordered flex w-full items-center gap-2">
+          <span class="text-base-content/50">@</span>
+          <input
+            type="search"
+            name="q"
+            value="<%= query %>"
+            class="grow border-0 bg-transparent focus:outline-none"
+            placeholder="username"
+            maxlength="20"
+            autocomplete="off"
+            spellcheck="false"
+          />
+        </label>
+        <button type="submit" class="btn btn-primary">Search</button>
+      </form>
+
+      <% if (query) { %>
+        <div class="mt-5 space-y-3">
+          <% if (searchResults.length === 0) { %>
+            <p class="text-base-content/70">No one matches <span class="font-semibold">@<%= query %></span>.</p>
+          <% } else { %>
+            <% searchResults.forEach(function (person) { %>
+              <%- include('partials/friend-row', { person: person, showProfileLink: true }) %>
+            <% }) %>
+          <% } %>
+        </div>
+      <% } %>
+    </div>
+  </section>
+
+  <% if (incoming.length) { %>
+    <section class="mt-8" aria-labelledby="incoming-heading">
+      <h2 id="incoming-heading" class="mb-3 text-xl font-bold">Requests</h2>
+      <div class="space-y-3">
+        <% incoming.forEach(function (row) { %>
+          <%- include('partials/friend-row', {
+            person: {
+              id: row.user._id,
+              userName: row.user.userName,
+              realName: row.user.realName,
+              friendshipId: row.friendshipId,
+              relation: 'incoming'
+            },
+            showProfileLink: true
+          }) %>
+        <% }) %>
+      </div>
+    </section>
+  <% } %>
+
+  <% if (outgoing.length) { %>
+    <section class="mt-8" aria-labelledby="outgoing-heading">
+      <h2 id="outgoing-heading" class="mb-3 text-xl font-bold">Sent</h2>
+      <div class="space-y-3">
+        <% outgoing.forEach(function (row) { %>
+          <%- include('partials/friend-row', {
+            person: {
+              id: row.user._id,
+              userName: row.user.userName,
+              realName: row.user.realName,
+              friendshipId: row.friendshipId,
+              relation: 'outgoing'
+            },
+            showProfileLink: true
+          }) %>
+        <% }) %>
+      </div>
+    </section>
+  <% } %>
+
+  <section class="mt-8" aria-labelledby="friends-heading">
+    <div class="mb-3 flex items-center justify-between">
+      <h2 id="friends-heading" class="text-xl font-bold">Friends</h2>
+      <span class="badge badge-outline"><%= friends.length %></span>
+    </div>
+    <% if (friends.length === 0) { %>
+      <div class="rounded-2xl border border-dashed border-base-content/25 bg-base-200/60 p-8 text-center">
+        <p class="font-semibold">No friends yet</p>
+        <p class="mt-1 text-sm text-base-content/60">Search for a username to send a request.</p>
+      </div>
+    <% } else { %>
+      <div class="space-y-3">
+        <% friends.forEach(function (person) { %>
+          <%- include('partials/friend-row', { person: person, showProfileLink: true }) %>
+        <% }) %>
+      </div>
+    <% } %>
+  </section>
+</main>
+
+<script src="/js/confirm-submit.js"></script>
+<%- include('partials/footer') -%>

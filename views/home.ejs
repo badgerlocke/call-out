@@ -67,7 +67,12 @@
                         </span>
                         <h3 class="card-title text-2xl"><%= trip.location %></h3>
                       </div>
-                      <span class="badge badge-outline"><%= trip.tripType || 'Trip' %></span>
+                      <div class="flex flex-col items-end gap-2">
+                        <span class="badge badge-outline"><%= trip.tripType || 'Trip' %></span>
+                        <span class="badge <%= trip.visibility === 'friends' ? 'badge-info' : 'badge-ghost' %>">
+                          <%= trip.visibility === 'friends' ? 'Friends' : 'Private' %>
+                        </span>
+                      </div>
                     </div>
                     <div class="mt-2 flex items-start gap-3">
                       <i class="far fa-clock mt-1 text-primary" aria-hidden="true"></i>
@@ -80,12 +85,25 @@
                       <p class="mt-2 text-base-content/70"><%= trip.details %></p>
                     <% } %>
                     <div class="card-actions mt-4 items-center justify-between">
-                      <form action="/trips/deleteTrip/<%= trip.id %>?_method=DELETE" method="POST">
-                        <button class="btn btn-ghost btn-sm text-error" type="submit" aria-label="Delete trip to <%= trip.location %>">
-                          <i class="fas fa-trash" aria-hidden="true"></i>
-                          Delete
-                        </button>
-                      </form>
+                      <div class="flex flex-wrap gap-1">
+                        <form action="/trips/deleteTrip/<%= trip.id %>?_method=DELETE" method="POST">
+                          <button class="btn btn-ghost btn-sm text-error" type="submit" aria-label="Delete trip to <%= trip.location %>">
+                            <i class="fas fa-trash" aria-hidden="true"></i>
+                            Delete
+                          </button>
+                        </form>
+                        <% if (trip.visibility === 'friends') { %>
+                          <form action="/trips/<%= trip.id %>/visibility?_method=PUT" method="POST">
+                            <input type="hidden" name="visibility" value="private">
+                            <button class="btn btn-ghost btn-sm" type="submit">Hide</button>
+                          </form>
+                        <% } else { %>
+                          <form action="/trips/<%= trip.id %>/visibility?_method=PUT" method="POST" data-confirm="Share this trip with friends? They will see your location, return time, and check-in status.">
+                            <input type="hidden" name="visibility" value="friends">
+                            <button class="btn btn-ghost btn-sm" type="submit">Share with friends</button>
+                          </form>
+                        <% } %>
+                      </div>
                       <form action="/trips/checkIn/<%= trip.id %>?_method=PUT" method="POST">
                         <button class="btn btn-success" type="submit">
                           <i class="fas fa-check" aria-hidden="true"></i>
@@ -110,6 +128,7 @@
                     <h3 class="truncate font-bold"><%= trip.location %></h3>
                     <p class="text-sm text-base-content/60">
                       <%= trip.tripType || 'Trip' %> · Returned by <%= formatDate(trip.returnTime) %>
+                      · <%= trip.visibility === 'friends' ? 'Friends' : 'Private' %>
                     </p>
                   </div>
                   <div class="flex shrink-0 items-center gap-1">
@@ -117,6 +136,17 @@
                       <i class="fas fa-check mr-1" aria-hidden="true"></i>
                       Checked in
                     </span>
+                    <% if (trip.visibility === 'friends') { %>
+                      <form action="/trips/<%= trip.id %>/visibility?_method=PUT" method="POST">
+                        <input type="hidden" name="visibility" value="private">
+                        <button class="btn btn-ghost btn-sm" type="submit">Hide</button>
+                      </form>
+                    <% } else { %>
+                      <form action="/trips/<%= trip.id %>/visibility?_method=PUT" method="POST" data-confirm="Share this trip with friends? They will see your location, return time, and check-in status.">
+                        <input type="hidden" name="visibility" value="friends">
+                        <button class="btn btn-ghost btn-sm" type="submit">Share</button>
+                      </form>
+                    <% } %>
                     <form action="/trips/deleteTrip/<%= trip.id %>?_method=DELETE" method="POST">
                       <button class="btn btn-ghost btn-sm btn-circle text-error" type="submit" aria-label="Delete trip to <%= trip.location %>">
                         <i class="fas fa-trash" aria-hidden="true"></i>
@@ -133,4 +163,5 @@
   </div>
 </main>
 
+<script src="/js/confirm-submit.js"></script>
 <%- include('partials/footer') -%>

@@ -11,6 +11,8 @@ router.post("/createTrip", ensureAuth, tripsController.createTrip);
 
 router.put("/checkIn/:id", ensureAuth, tripsController.checkIn)
 
+router.put("/:id/visibility", ensureAuth, tripsController.updateVisibility)
+
 router.delete("/deleteTrip/:id", ensureAuth, tripsController.deleteTrip);
 
 

@@ -180,6 +180,19 @@ exports.updateTheme = async (req, res, next) => {
   }
 };
 
+exports.updatePrivacy = async (req, res, next) => {
+  const tripVisibilityDefault =
+    req.body.tripVisibilityDefault === "friends" ? "friends" : "private";
+  try {
+    req.user.tripVisibilityDefault = tripVisibilityDefault;
+    await req.user.save();
+    req.flash("success", { msg: "Trip privacy default saved." });
+    return res.redirect("/settings#privacy");
+  } catch (err) {
+    return next(err);
+  }
+};
+
 exports.createContact = async (req, res, next) => {
   const contact = contactFromBody(req.body);
   const errors = validateContact(contact);
