@@ -1,3 +1,4 @@
+const mongoose = require("mongoose");
 const validator = require("validator");
 const User = require("../models/User");
 const {
@@ -5,11 +6,13 @@ const {
   slugifyUserName,
   validateUserName,
 } = require("../utils/username");
+const { destroyUserSessions } = require("../utils/sessions");
+const { plainText } = require("../utils/html");
 
 const THEMES = new Set(["light", "forest"]);
 
 function field(value, maxLength = 500) {
-  return typeof value === "string" ? value.trim().slice(0, maxLength) : "";
+  return plainText(value, maxLength);
 }
 
 function normalizedEmail(value) {
@@ -140,6 +143,18 @@ exports.updatePassword = async (req, res, next) => {
 
     req.user.password = password;
     await req.user.save();
+    try {
+      await destroyUserSessions(
+        req.user.id,
+        { keepSessionId: req.sessionID },
+        mongoose.connection.collection("sessions")
+      );
+    } catch (error) {
+      console.error(
+        "Failed to invalidate other sessions after password change:",
+        error.message
+      );
+    }
     req.flash("success", {
       msg: hadPassword
         ? "Password changed."

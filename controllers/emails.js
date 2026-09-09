@@ -1,5 +1,6 @@
 // Contains alert email wording.
 const Users = require("../models/User");
+const { escapeHtml } = require("../utils/html");
 
 async function findUser(trip) {
   return Users.findById(trip.user);
@@ -9,15 +10,6 @@ function senderAddress() {
   return process.env.EMAIL
     ? `"Call Out App" <${process.env.EMAIL}>`
     : "Call Out App";
-}
-
-function escapeHtml(value) {
-  return String(value)
-    .replaceAll("&", "&amp;")
-    .replaceAll("<", "&lt;")
-    .replaceAll(">", "&gt;")
-    .replaceAll('"', "&quot;")
-    .replaceAll("'", "&#039;");
 }
 
 async function resolveUser(trip, user) {

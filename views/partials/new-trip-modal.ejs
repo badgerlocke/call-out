@@ -5,6 +5,9 @@
     </form>
 
     <form action="/trips/createTrip" method="POST" id="newTripForm" data-mode="wizard" class="flex min-h-[24rem] flex-col">
+      <div class="alert alert-info mx-6 mt-6 w-auto text-sm" role="note">
+        <span>In this demo, we email you if you miss check-in. We do not message your contacts yet.</span>
+      </div>
       <div id="new-trip-wizard" class="flex flex-1 flex-col">
         <section data-wizard-step="type" class="flex flex-1 flex-col p-6 pb-4">
           <h2 id="new-trip-modal-title" class="pr-8 text-2xl font-bold">What kind of trip are you planning?</h2>
@@ -52,7 +55,7 @@
         </section>
 
         <section data-wizard-step="notify" hidden class="flex flex-1 flex-col p-6">
-          <h2 class="pr-8 text-2xl font-bold">Should we contact your contacts if you don't check in?</h2>
+          <h2 class="pr-8 text-2xl font-bold">Should we email you if you don't check in?</h2>
           <div class="mt-5 flex flex-col gap-2">
             <button type="button" class="btn btn-outline js-notify-choice" data-value="yes">Yes</button>
             <button type="button" class="btn btn-outline js-notify-choice" data-value="no">No</button>
@@ -64,8 +67,8 @@
         </section>
 
         <section data-wizard-step="notifyWhen" hidden class="flex flex-1 flex-col p-6">
-          <h2 class="pr-8 text-2xl font-bold">When should we contact them?</h2>
-          <p class="mt-2 text-sm text-base-content/70">How long after your expected return should we reach your emergency contacts?</p>
+          <h2 class="pr-8 text-2xl font-bold">When should we email you?</h2>
+          <p class="mt-2 text-sm text-base-content/70">Choose how long after your expected return we should send your overdue email.</p>
           <div class="join mt-5">
             <input type="number" min="1" step="1" value="2" class="input input-bordered join-item w-24" data-wizard="offsetValue">
             <select class="select select-bordered join-item" data-wizard="offsetUnit">
@@ -125,13 +128,13 @@
         <div class="form-control">
           <label class="label w-fit cursor-pointer justify-start gap-3">
             <input type="checkbox" checked class="checkbox checkbox-primary" id="notify" name="notify" value="true">
-            <span class="label-text">Notify my contacts if I don't check in</span>
+            <span class="label-text">Email me if I don't check in</span>
           </label>
         </div>
 
         <div class="form-control" id="notifyFields">
           <label class="label" for="notifyOffsetValue">
-            <span class="label-text">How long after your expected return time should we notify your emergency contacts?</span>
+            <span class="label-text">How long after your expected return time should we email you?</span>
           </label>
           <div class="join">
             <input type="number" min="1" step="1" value="2" class="input input-bordered join-item w-24" id="notifyOffsetValue" name="notifyOffsetValue" required>

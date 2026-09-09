@@ -17,10 +17,12 @@ Try it out here:
   - PORT = 3000 (can be any port)
   - DB_STRING = `your database URI`
   - SESSION_SECRET = `a long random string`
+  - APP_URL = `the public HTTPS origin, for example https://callout.example`
+  - NODE_ENV = `production` (on the deployed server; enables secure cookies)
   - GOOGLE_CLIENT_ID = `your google cloud oauth2 client id`
   - GOOGLE_CLIENT_SECRET = `your google cloud oauth2 client secret`
 
-- (Optional) For account-holder email alerts, add:
+- For password resets and optional account-holder email alerts, add:
   - EMAIL = `your Gmail address`
   - EMAIL_PW = `your Gmail app password`
   - USER_ALERTS_ENABLED = `true` (defaults to true when both email values exist)

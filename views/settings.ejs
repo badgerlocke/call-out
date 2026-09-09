@@ -161,7 +161,7 @@
             <div>
               <h2 class="card-title text-2xl">Emergency contacts</h2>
               <p class="mt-1 text-base-content/70">
-                Stored for future alerts. In this demo, we do not message your contacts yet.
+                In this demo, we email you if you miss check-in. We do not message your contacts yet.
               </p>
             </div>
             <span class="badge badge-warning badge-outline whitespace-nowrap">Notifications off</span>
@@ -204,7 +204,7 @@
                         <button type="submit" class="btn btn-primary btn-sm">Save contact</button>
                       </div>
                     </form>
-                    <form action="/settings/contacts/<%= contact.id %>?_method=DELETE" method="POST" class="mt-2 flex justify-end" onsubmit="return confirm('Delete this emergency contact?');">
+                    <form action="/settings/contacts/<%= contact.id %>?_method=DELETE" method="POST" class="mt-2 flex justify-end" data-confirm="Delete this emergency contact?">
                       <button type="submit" class="btn btn-ghost btn-sm text-error">Delete contact</button>
                     </form>
                   </div>
@@ -251,4 +251,5 @@
 </main>
 
 <script src="/js/show-password.js"></script>
+<script src="/js/confirm-submit.js"></script>
 <%- include('partials/footer') -%>

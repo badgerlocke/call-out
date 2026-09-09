@@ -26,6 +26,8 @@ const UserSchema = new mongoose.Schema({
   realName: { type: String },
   email: { type: String, unique: true },
   password: String,
+  resetPasswordToken: { type: String, select: false, index: true },
+  resetPasswordExpires: { type: Date, select: false },
   phoneNumber: { type: Number },
   profilePic: { type: String, required: false },
   cloudinaryId: { type: String, required: false },

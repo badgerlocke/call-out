@@ -8,9 +8,13 @@ const methodOverride = require("method-override");
 const flash = require("express-flash");
 const logger = require("morgan");
 const connectDB = require("./config/database");
+const { securityHeaders } = require("./middleware/security-headers");
 
 // Use .env file in config folder before loading modules that read feature flags.
 require("dotenv").config({ path: "./config/.env" });
+
+const isProduction = process.env.NODE_ENV === "production";
+app.set("trust proxy", 1);
 
 const mainRoutes = require("./routes/main");
 const tripRoutes = require("./routes/trips");
@@ -31,6 +35,9 @@ connectDB().then(() => {
 
   //Using EJS for views
   app.set("view engine", "ejs");
+  app.disable("x-powered-by");
+
+  app.use(securityHeaders);
 
   //Static Folder
   app.use(express.static("public"));
@@ -40,7 +47,11 @@ connectDB().then(() => {
   app.use(express.json());
 
   //Logging
-  app.use(logger("dev"));
+  app.use(
+    logger("dev", {
+      skip: (req) => req.originalUrl.startsWith("/reset-password/"),
+    })
+  );
 
   //Use forms for put / delete
   app.use(methodOverride("_method"));
@@ -54,6 +65,11 @@ connectDB().then(() => {
       store: MongoStore.create({
         client: mongoose.connection.getClient(),
       }),
+      cookie: {
+        httpOnly: true,
+        sameSite: "lax",
+        secure: isProduction,
+      },
     })
   );
 

@@ -1,5 +1,14 @@
 const Trip = require("../models/Trip");
-const User = require("../models/User")
+const { plainText } = require("../utils/html");
+
+const TRIP_TYPES = new Set([
+  "Hiking",
+  "Camping",
+  "Backpacking",
+  "Climbing",
+  "Caving",
+  "Other",
+]);
 
 const UNIT_MS = {
   minutes: 60 * 1000,
@@ -99,11 +108,18 @@ module.exports = {
         console.log("Trip needs a return date and time");
         return res.redirect("/?newTrip=1");
       }
+      const location = plainText(req.body.location, 200);
+      if (!location) {
+        return res.redirect("/?newTrip=1");
+      }
+      const tripType = TRIP_TYPES.has(req.body.tripType)
+        ? req.body.tripType
+        : "";
       await Trip.create({
         user: req.user.id,
-        location: req.body.location,
-        details: req.body.details,
-        tripType: req.body.tripType,
+        location,
+        details: plainText(req.body.details, 2000),
+        tripType,
         returnTime: returnTime,
         notifyTime: resolveNotifyTime(returnTime, req.body),
         notify: wantsNotify(req.body),

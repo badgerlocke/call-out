@@ -14,7 +14,8 @@
       <div class="flex flex-col gap-5 border-b border-base-300 pb-7 sm:flex-row sm:items-end sm:justify-between">
         <div>
           <p class="mb-2 text-sm font-semibold uppercase tracking-widest text-primary">
-            Welcome back<%= user.realName ? `, ${user.realName.split(' ')[0]}` : '' %>
+            <% const firstName = user.realName ? user.realName.split(' ')[0] : ''; %>
+            Welcome back<% if (firstName) { %>, <%= firstName %><% } %>
           </p>
           <h1 class="text-3xl font-bold sm:text-4xl">My trips</h1>
           <p class="mt-2 max-w-2xl text-base-content/70">

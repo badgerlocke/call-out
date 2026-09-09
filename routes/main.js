@@ -3,6 +3,7 @@ const router = express.Router();
 const authController = require("../controllers/auth");
 const tripsController = require("../controllers/trips");
 const { ensureAuth } = require("../middleware/auth");
+const { authPostLimit } = require("../middleware/rate-limit");
 
 //Main Routes
 router.get("/", ensureAuth, tripsController.getHome);
@@ -17,10 +18,14 @@ router.get("/mytrips", tripsController.getMyTrips);
 
 //Routes for user login/signup
 router.get("/login", authController.getLogin);
-router.post("/login", authController.postLogin);
+router.post("/login", authPostLimit, authController.postLogin);
 router.get("/logout", authController.logout);
 router.get("/signup", authController.getSignup);
-router.post("/signup", authController.postSignup);
+router.post("/signup", authPostLimit, authController.postSignup);
+router.get("/forgot-password", authController.getForgotPassword);
+router.post("/forgot-password", authPostLimit, authController.postForgotPassword);
+router.get("/reset-password/:token", authController.getResetPassword);
+router.post("/reset-password/:token", authPostLimit, authController.postResetPassword);
 
 //Testing
 router.get("/template", tripsController.getTemplate);
