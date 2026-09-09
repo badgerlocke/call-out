@@ -1,7 +1,11 @@
+const mongoose = require("mongoose");
 const Trip = require("../models/Trip");
 const { plainText } = require("../utils/html");
 const {
+  FEED_LIMIT,
   acceptedFriendIds,
+  areFriends,
+  canViewTrip,
   friendsFeedQuery,
   resolveTripVisibility,
 } = require("../utils/friends");
@@ -68,6 +72,7 @@ module.exports = {
       const trips = friendIds.length
         ? await Trip.find(friendsFeedQuery(friendIds))
             .sort({ createdAt: "desc" })
+            .limit(FEED_LIMIT)
             .populate("user", "userName realName")
             .lean()
         : [];
@@ -99,12 +104,25 @@ module.exports = {
   getNewTrip: async (req, res) => {
     res.redirect("/?newTrip=1");
   },
-  getTrip: async (req, res) => {
+  getTrip: async (req, res, next) => {
     try {
+      if (!mongoose.isValidObjectId(req.params.id)) {
+        req.flash("errors", { msg: "Trip not found." });
+        return res.redirect("/");
+      }
       const trip = await Trip.findById(req.params.id);
+      if (!trip) {
+        req.flash("errors", { msg: "Trip not found." });
+        return res.redirect("/");
+      }
+      const isFriend = await areFriends(req.user.id, trip.user);
+      if (!canViewTrip(req.user.id, trip, isFriend)) {
+        req.flash("errors", { msg: "Trip not found." });
+        return res.redirect("/");
+      }
       res.render("trip.ejs", { trip: trip, user: req.user });
     } catch (err) {
-      console.log(err);
+      return next(err);
     }
   },
   createTrip: async (req, res) => {

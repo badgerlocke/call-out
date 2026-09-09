@@ -7,6 +7,7 @@ const {
   canDecline,
   canUnfriend,
   canViewTrip,
+  FEED_LIMIT,
   friendsFeedQuery,
   otherParticipant,
   requestDecision,
@@ -81,6 +82,7 @@ test("friends feed query only includes friends-visible trips from friend ids", (
   const query = friendsFeedQuery([A, B]);
   assert.deepEqual(query.user.$in, [A, B]);
   assert.equal(query.visibility, "friends");
+  assert.equal(FEED_LIMIT, 100);
 });
 
 test("new trips default to private unless the body or account default says friends", () => {

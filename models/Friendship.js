@@ -55,11 +55,19 @@ FriendshipSchema.pre("validate", function setPair(next) {
 
 const Friendship = mongoose.model("Friendship", FriendshipSchema);
 
-async function syncFriendshipIndexes() {
+async function syncFriendshipIndexes(attempt = 1) {
   try {
     await Friendship.syncIndexes();
   } catch (err) {
-    console.error("Failed to sync Friendship indexes:", err.message);
+    console.error(
+      `Failed to sync Friendship indexes (attempt ${attempt}):`,
+      err.message
+    );
+    if (attempt < 3) {
+      await new Promise((resolve) => setTimeout(resolve, 500 * attempt));
+      return syncFriendshipIndexes(attempt + 1);
+    }
+    process.exit(1);
   }
 }
 

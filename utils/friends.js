@@ -1,6 +1,7 @@
 const Friendship = require("../models/Friendship");
 
 const VISIBILITY = new Set(["private", "friends"]);
+const FEED_LIMIT = 100;
 
 function idString(value) {
   if (!value) return "";
@@ -142,6 +143,7 @@ async function acceptedFriendIds(userId) {
 }
 
 module.exports = {
+  FEED_LIMIT,
   VISIBILITY,
   acceptedFriendIds,
   areFriends,

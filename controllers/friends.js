@@ -1,10 +1,7 @@
+const mongoose = require("mongoose");
 const User = require("../models/User");
 const Friendship = require("../models/Friendship");
 const {
-  canAccept,
-  canCancel,
-  canDecline,
-  canUnfriend,
   findPair,
   idString,
   otherParticipant,
@@ -101,7 +98,7 @@ exports.getFriends = async (req, res, next) => {
 
     res.render("friends", {
       user: req.user,
-      query: req.query.q || "",
+      query,
       searchResults,
       incoming: incoming.flatMap((row) =>
         row.requester
@@ -188,8 +185,11 @@ exports.requestFriend = async (req, res, next) => {
       return res.redirect("/friends");
     }
     if (decision.action === "acceptIncoming") {
-      existing.status = "accepted";
-      await existing.save();
+      const accepted = await acceptPending(existing._id, req.user.id);
+      if (!accepted) {
+        req.flash("errors", { msg: "Friend request not found." });
+        return res.redirect("/friends");
+      }
       flashRequestDecision(req, decision.action, found);
       return res.redirect("/friends");
     }
@@ -210,8 +210,11 @@ exports.requestFriend = async (req, res, next) => {
         const raced = await findPair(req.user.id, found._id);
         const racedDecision = requestDecision(raced, req.user.id);
         if (racedDecision.action === "acceptIncoming") {
-          raced.status = "accepted";
-          await raced.save();
+          const accepted = await acceptPending(raced._id, req.user.id);
+          if (!accepted) {
+            req.flash("errors", { msg: "Friend request not found." });
+            return res.redirect("/friends");
+          }
         }
         const flashAction =
           racedDecision.action === "create" ? "alreadyPending" : racedDecision.action;
@@ -245,75 +248,74 @@ function flashRequestDecision(req, action, found) {
   req.flash("info", { msg: "A friend request is already pending." });
 }
 
-async function loadOwnFriendship(req) {
-  const friendship = await Friendship.findById(req.params.id);
-  if (!friendship) return null;
-  if (
-    String(friendship.requester) !== String(req.user.id) &&
-    String(friendship.addressee) !== String(req.user.id)
-  ) {
-    return null;
-  }
-  return friendship;
+function friendshipFilter(id, extra) {
+  if (!mongoose.isValidObjectId(id)) return null;
+  return { _id: id, ...extra };
 }
 
-exports.acceptFriend = async (req, res, next) => {
-  try {
-    const friendship = await loadOwnFriendship(req);
-    if (!canAccept(req.user.id, friendship)) {
-      req.flash("errors", { msg: "Friend request not found." });
-      return res.redirect("/friends");
-    }
-    friendship.status = "accepted";
-    await friendship.save();
-    req.flash("success", { msg: "Friend request accepted." });
-    return res.redirect("/friends");
-  } catch (err) {
-    return next(err);
-  }
-};
+function acceptPending(id, addresseeId) {
+  const filter = friendshipFilter(id, {
+    addressee: addresseeId,
+    status: "pending",
+  });
+  if (!filter) return null;
+  return Friendship.findOneAndUpdate(
+    filter,
+    { $set: { status: "accepted" } }
+  );
+}
 
-exports.declineFriend = async (req, res, next) => {
+async function mutateOwnFriendship(req, res, next, { extra, successMsg, notFoundMsg, mutate }) {
   try {
-    const friendship = await loadOwnFriendship(req);
-    if (!canDecline(req.user.id, friendship)) {
-      req.flash("errors", { msg: "Friend request not found." });
+    const filter = friendshipFilter(req.params.id, extra);
+    if (!filter) {
+      req.flash("errors", { msg: notFoundMsg });
       return res.redirect("/friends");
     }
-    await friendship.deleteOne();
-    req.flash("success", { msg: "Friend request declined." });
+    const result = await mutate(filter);
+    if (!result) {
+      req.flash("errors", { msg: notFoundMsg });
+      return res.redirect("/friends");
+    }
+    req.flash("success", { msg: successMsg });
     return res.redirect("/friends");
   } catch (err) {
     return next(err);
   }
-};
+}
 
-exports.cancelFriend = async (req, res, next) => {
-  try {
-    const friendship = await loadOwnFriendship(req);
-    if (!canCancel(req.user.id, friendship)) {
-      req.flash("errors", { msg: "Friend request not found." });
-      return res.redirect("/friends");
-    }
-    await friendship.deleteOne();
-    req.flash("success", { msg: "Friend request canceled." });
-    return res.redirect("/friends");
-  } catch (err) {
-    return next(err);
-  }
-};
+exports.acceptFriend = (req, res, next) =>
+  mutateOwnFriendship(req, res, next, {
+    extra: { addressee: req.user.id, status: "pending" },
+    successMsg: "Friend request accepted.",
+    notFoundMsg: "Friend request not found.",
+    mutate: (filter) =>
+      Friendship.findOneAndUpdate(filter, { $set: { status: "accepted" } }),
+  });
 
-exports.unfriend = async (req, res, next) => {
-  try {
-    const friendship = await loadOwnFriendship(req);
-    if (!canUnfriend(req.user.id, friendship)) {
-      req.flash("errors", { msg: "Friendship not found." });
-      return res.redirect("/friends");
-    }
-    await friendship.deleteOne();
-    req.flash("success", { msg: "Removed from friends." });
-    return res.redirect("/friends");
-  } catch (err) {
-    return next(err);
-  }
-};
+exports.declineFriend = (req, res, next) =>
+  mutateOwnFriendship(req, res, next, {
+    extra: { addressee: req.user.id, status: "pending" },
+    successMsg: "Friend request declined.",
+    notFoundMsg: "Friend request not found.",
+    mutate: (filter) => Friendship.findOneAndDelete(filter),
+  });
+
+exports.cancelFriend = (req, res, next) =>
+  mutateOwnFriendship(req, res, next, {
+    extra: { requester: req.user.id, status: "pending" },
+    successMsg: "Friend request canceled.",
+    notFoundMsg: "Friend request not found.",
+    mutate: (filter) => Friendship.findOneAndDelete(filter),
+  });
+
+exports.unfriend = (req, res, next) =>
+  mutateOwnFriendship(req, res, next, {
+    extra: {
+      status: "accepted",
+      $or: [{ requester: req.user.id }, { addressee: req.user.id }],
+    },
+    successMsg: "Removed from friends.",
+    notFoundMsg: "Friendship not found.",
+    mutate: (filter) => Friendship.findOneAndDelete(filter),
+  });
