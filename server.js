@@ -85,6 +85,7 @@ connectDB().then(() => {
   app.use("/auth", require("./routes/auth"));
   app.use("/settings", require("./routes/settings"));
   app.use("/friends", require("./routes/friends"));
+  app.use("/admin", require("./routes/admin"));
   app.use("/trips", tripRoutes);
 
   //Server Running

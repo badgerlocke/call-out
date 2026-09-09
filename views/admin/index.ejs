@@ -1,0 +1,155 @@
+<%- include('../partials/header') -%>
+
+<main class="container max-w-7xl px-4 py-8 sm:py-12">
+  <div class="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+    <div>
+      <p class="text-sm font-semibold uppercase tracking-widest text-primary">Administration</p>
+      <h1 class="mt-1 text-3xl font-bold sm:text-4xl">Moderation</h1>
+      <p class="mt-2 text-base-content/70"><%= userCount %> accounts and <%= tripCount %> trips.</p>
+    </div>
+    <form action="/admin" method="GET" class="flex w-full max-w-lg gap-2">
+      <input
+        type="search"
+        name="q"
+        value="<%= query %>"
+        class="input input-bordered w-full"
+        placeholder="Search accounts and trips"
+        maxlength="100"
+      />
+      <button type="submit" class="btn btn-primary">Search</button>
+    </form>
+  </div>
+
+  <section class="mt-10" aria-labelledby="accounts-heading">
+    <div class="mb-3 flex items-center justify-between">
+      <h2 id="accounts-heading" class="text-2xl font-bold">Accounts</h2>
+      <% if (users.length === resultLimit) { %>
+        <span class="text-sm text-base-content/60">Showing first <%= resultLimit %></span>
+      <% } %>
+    </div>
+
+    <div class="overflow-x-auto rounded-box border border-base-content/15 bg-base-100 shadow">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Account</th>
+            <th>Status</th>
+            <th>Role</th>
+            <th class="text-right">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% users.forEach(function (account) { %>
+            <tr>
+              <td>
+                <div class="font-semibold">@<%= account.userName %></div>
+                <div class="text-sm text-base-content/60"><%= account.realName || 'No name' %> · <%= account.email %></div>
+              </td>
+              <td>
+                <% if (account.bannedAt) { %>
+                  <span class="badge badge-error">Banned</span>
+                  <% if (account.banReason) { %>
+                    <div class="mt-1 max-w-xs text-xs text-base-content/60"><%= account.banReason %></div>
+                  <% } %>
+                <% } else { %>
+                  <span class="badge badge-success">Active</span>
+                <% } %>
+              </td>
+              <td><span class="badge badge-outline"><%= account.role || 'user' %></span></td>
+              <td>
+                <% if (String(account._id) === String(user._id)) { %>
+                  <div class="text-right text-sm text-base-content/50">Current account</div>
+                <% } else { %>
+                  <div class="flex min-w-72 flex-col items-end gap-2">
+                    <% if (account.bannedAt) { %>
+                      <form action="/admin/users/<%= account._id %>/unban" method="POST">
+                        <button type="submit" class="btn btn-success btn-sm">Unban</button>
+                      </form>
+                    <% } else { %>
+                      <form action="/admin/users/<%= account._id %>/ban" method="POST" class="flex gap-2">
+                        <input
+                          type="text"
+                          name="reason"
+                          class="input input-bordered input-sm w-44"
+                          placeholder="Reason (optional)"
+                          maxlength="500"
+                        />
+                        <button type="submit" class="btn btn-warning btn-sm">Ban</button>
+                      </form>
+                    <% } %>
+                    <form
+                      action="/admin/users/<%= account._id %>?_method=DELETE"
+                      method="POST"
+                      data-confirm="Permanently delete @<%= account.userName %>, all of their trips, and all of their friendships?"
+                    >
+                      <button type="submit" class="btn btn-error btn-sm btn-outline">Delete account</button>
+                    </form>
+                  </div>
+                <% } %>
+              </td>
+            </tr>
+          <% }) %>
+          <% if (!users.length) { %>
+            <tr><td colspan="4" class="py-8 text-center text-base-content/60">No accounts found.</td></tr>
+          <% } %>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="mt-10" aria-labelledby="trips-heading">
+    <div class="mb-3 flex items-center justify-between">
+      <h2 id="trips-heading" class="text-2xl font-bold">Trips</h2>
+      <% if (trips.length === resultLimit) { %>
+        <span class="text-sm text-base-content/60">Showing first <%= resultLimit %></span>
+      <% } %>
+    </div>
+
+    <div class="overflow-x-auto rounded-box border border-base-content/15 bg-base-100 shadow">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Trip</th>
+            <th>Owner</th>
+            <th>Return time</th>
+            <th class="text-right">Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% trips.forEach(function (trip) { %>
+            <tr>
+              <td>
+                <div class="font-semibold"><%= trip.location %></div>
+                <div class="max-w-md truncate text-sm text-base-content/60"><%= trip.tripType || 'Trip' %><% if (trip.details) { %> · <%= trip.details %><% } %></div>
+              </td>
+              <td>
+                <% if (trip.user) { %>
+                  <div>@<%= trip.user.userName %></div>
+                  <div class="text-xs text-base-content/60"><%= trip.user.email %></div>
+                <% } else { %>
+                  <span class="text-base-content/50">Deleted account</span>
+                <% } %>
+              </td>
+              <td><%= new Date(trip.returnTime).toLocaleString() %></td>
+              <td class="text-right">
+                <form
+                  action="/admin/trips/<%= trip._id %>?_method=DELETE"
+                  method="POST"
+                  data-confirm="Permanently delete this trip?"
+                >
+                  <button type="submit" class="btn btn-error btn-sm btn-outline">Delete</button>
+                </form>
+              </td>
+            </tr>
+          <% }) %>
+          <% if (!trips.length) { %>
+            <tr><td colspan="4" class="py-8 text-center text-base-content/60">No trips found.</td></tr>
+          <% } %>
+        </tbody>
+      </table>
+    </div>
+  </section>
+</main>
+
+<script src="/js/confirm-submit.js"></script>
+<%- include('../partials/footer') -%>

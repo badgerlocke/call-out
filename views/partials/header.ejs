@@ -62,6 +62,9 @@
                 <li><a href="/feed">Friends' trips</a></li>
                 <li><a href="/friends">Friends</a></li>
                 <li><a href="/settings">Settings</a></li>
+                <% if (user.role === 'admin') { %>
+                  <li><a href="/admin">Admin</a></li>
+                <% } %>
                 <li><a href="/logout">Log out</a></li>
               </ul>
             </div>

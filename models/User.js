@@ -26,6 +26,13 @@ const UserSchema = new mongoose.Schema({
   realName: { type: String },
   email: { type: String, unique: true },
   password: String,
+  role: {
+    type: String,
+    enum: ["user", "admin"],
+    default: "user",
+  },
+  bannedAt: { type: Date, default: null },
+  banReason: { type: String, trim: true, default: "" },
   resetPasswordToken: { type: String, select: false, index: true },
   resetPasswordExpires: { type: Date, select: false },
   phoneNumber: { type: Number },

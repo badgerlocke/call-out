@@ -13,6 +13,7 @@ const {
 } = require("../utils/password-reset");
 const { destroyUserSessions } = require("../utils/sessions");
 const { escapeHtml, plainText } = require("../utils/html");
+const { addDefaultFriend } = require("../utils/default-friend");
 
 function sessionsCollection() {
   return mongoose.connection.collection("sessions");
@@ -323,6 +324,11 @@ exports.postSignup = async (req, res, next) => {
       password,
     });
     await user.save();
+    try {
+      await addDefaultFriend(user.id);
+    } catch (error) {
+      console.error("Failed to add the default friend:", error.message);
+    }
     logInFreshSession(req, user, "Your account has been created.", res, next);
   } catch (err) {
     if (err.code === 11000) {

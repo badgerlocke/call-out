@@ -132,6 +132,42 @@ async function findPair(userA, userB) {
   });
 }
 
+async function ensureAcceptedFriendship(
+  requesterId,
+  addresseeId,
+  FriendshipModel = Friendship
+) {
+  const pair = sortedPair(requesterId, addresseeId);
+  if (!pair) return null;
+
+  const update = {
+    $set: { status: "accepted" },
+    $setOnInsert: {
+      requester: requesterId,
+      addressee: addresseeId,
+      userLow: pair.userLow,
+      userHigh: pair.userHigh,
+    },
+  };
+
+  try {
+    return await FriendshipModel.findOneAndUpdate(pair, update, {
+      new: true,
+      upsert: true,
+      setDefaultsOnInsert: true,
+    });
+  } catch (error) {
+    if (error && error.code === 11000) {
+      return FriendshipModel.findOneAndUpdate(
+        pair,
+        { $set: { status: "accepted" } },
+        { new: true }
+      );
+    }
+    throw error;
+  }
+}
+
 async function acceptedFriendIds(userId) {
   const uid = idString(userId);
   if (!uid) return [];
@@ -152,6 +188,7 @@ module.exports = {
   canDecline,
   canUnfriend,
   canViewTrip,
+  ensureAcceptedFriendship,
   findPair,
   friendsFeedQuery,
   idString,
