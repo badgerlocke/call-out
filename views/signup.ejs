@@ -1,91 +1,76 @@
 <%- include('partials/header') -%>
-    <main class="container">
-        <div class="row justify-content-center">
-            <section class="">
-                <% if (locals.messages.errors) { %>
-                    <% messages.errors.forEach( el => { %>
-                        <div class="alert alert-danger"><%= el.msg %></div>
-                    <% }) %>    
-                <% } %>
-                <% if (locals.messages.info) { %>
-                    <% messages.info.forEach( el => { %>
-                        <div class="alert alert-info"><%= el.msg %></div>
-                    <% }) %>    
-                <% } %>
-                <form action="/signup" method="POST">
-                    <div class="">
-                        <label for="realName" class="form-label">Your name</label>
-                        <input type="text" class="form-control" id="realName" aria-describedby="real-name" name="realName">
-                        <!-- <div id="real-name" class="form-text">The name you go by</div> -->
-                    </div>
-                    <div class="">
-                        <label for="userName" class="form-label">Username</label>
-                        <input type="text" class="form-control" id="userName" name="userName">
-                    </div>
-                    <!-- TODO - uncomment when code is implemented to handle profile pics -->
-                    <!-- <div class="mb-3">
-                      <label for="profilePic" class="form-label">Picture of your cat</label>
-                      <input type="file" class="form-control" id="profilePic" name="file">
-                      <div id="emailHelp" class="form-text">This will be your profile pic.</div>
-                    </div> -->
-                    <div class=" form-control">
-                      <label for="exampleInputEmail1" class="form-label label-text">Email address</label>
-                      <input type="email" class="form-control input input-bordered" id="exampleInputEmail1" aria-describedby="emailHelp" name="email">
-                      <div id="emailHelp" class="form-text">We'll never share your email with anyone else.</div>
-                    </div>
-                    <div class="">
-                      <label for="password" class="form-label">Password</label>
-                      <input type="password" class="form-control" id="password" name="password">
-                    </div>
-                    <div class="">
-                        <label for="confirmPassword" class="form-label">Confirm Password</label>
-                        <input type="password" class="form-control" id="confirmPassword" name="confirmPassword">
-                    </div>
 
-                    <h4>Optional information</h4>
-                    <div class="">
-                        <label for="age" class="form-label">Age</label>
-                        <input type="number" class="form-control" id="age" name="age">
-                    </div>
-                    <div class="">
-                        <label for="profilePic" class="form-label">Profile picture</label>
-                        <input type="file" class="form-control" id="profilePic" aria-describedby="pic" name="profilePic">
-                        <div id="pic" class="form-text">Please provide a recent picture of yourself. Aside from serving as your profile picture, this can help identify you if a search is ever necessary.</div>
-                    </div>
-                    <div class="">
-                        <label for="location" class="form-label">Location</label>
-                        <input type="text" class="form-control" id="location" name="location">
-                        <div id="bio-desc" class="form-text">Zip code or city, state (optional)</div>
-                        <!-- Todo: allow zip code or city, state lookup -->
-                    </div>
-                    <div class="">
-                        <label for="bio" class="form-label">Bio</label>
-                        <input type="textbox" class="form-control" id="bio" aria-describedby="bio-desc" name="bio">
-                        <div id="bio-desc" class="form-text">Tell us a bit about yourself (optional)</div>
-                    </div>
+<main class="container max-w-xl px-4 py-10">
+  <div class="card border border-base-content/15 bg-base-100 shadow-xl">
+    <section class="card-body">
+      <h1 class="mb-2 text-3xl font-bold">Create your account</h1>
+      <p class="mb-4 text-base-content/70">Start planning trips with just the essentials.</p>
 
-                    <div class="">
-                        <label for="phoneNumber" class="form-label">Phone number</label>
-                        <input type="tel" class="form-control" id="phoneNumber" aria-describedby="phone" name="phoneNumber">
-                        <div id="phone" class="form-text"></div>
-                    </div>
-                    <h4>Emergency contact</h4>
-                    <div class="">
-                        <label for="contactName" class="form-label">Emergency contact name</label>
-                        <input type="text" class="form-control" id="contactName" name="contactName">
-                    </div>
-                    <div class="">
-                        <label for="contactEmail" class="form-label">Emergency contact email</label>
-                        <input type="email" class="form-control" id="contactEmail" name="contactEmail">
-                    </div>
-                    <div class="">
-                        <label for="contactPhone" class="form-label">Emergency phone number</label>
-                        <input type="tel" class="form-control" id="contactPhone" name="contactPhone">
-                    </div>
-                    <button type="submit" class="btn btn-primary">Submit</button>
-                  </form>
-            </section>
+      <form action="/signup" method="POST" class="space-y-4">
+        <div>
+          <label for="realName" class="label-text">Name</label>
+          <input
+            type="text"
+            class="input input-bordered w-full"
+            id="realName"
+            name="realName"
+            autocomplete="name"
+            required
+          />
         </div>
-    </main>
+        <div>
+          <label for="email" class="label-text">Email address</label>
+          <input
+            type="email"
+            class="input input-bordered w-full"
+            id="email"
+            name="email"
+            autocomplete="email"
+            required
+          />
+        </div>
+        <div>
+          <label for="password" class="label-text">Password</label>
+          <input
+            type="password"
+            class="input input-bordered w-full"
+            id="password"
+            name="password"
+            autocomplete="new-password"
+            minlength="8"
+            data-password
+            required
+          />
+          <div class="label-text-alt mt-1 text-base-content/60">At least 8 characters</div>
+        </div>
+        <div>
+          <label for="confirmPassword" class="label-text">Confirm password</label>
+          <input
+            type="password"
+            class="input input-bordered w-full"
+            id="confirmPassword"
+            name="confirmPassword"
+            autocomplete="new-password"
+            minlength="8"
+            data-password
+            required
+          />
+          <label class="label cursor-pointer justify-start gap-2 py-1">
+            <input type="checkbox" class="checkbox checkbox-sm" data-show-password />
+            <span class="label-text">Show passwords</span>
+          </label>
+        </div>
+        <button type="submit" class="btn btn-primary w-full">Create account</button>
+      </form>
+
+      <p class="mt-6 text-center">
+        Already have an account?
+        <a href="/login" class="link link-primary font-semibold">Log in</a>
+      </p>
+    </section>
+  </div>
+</main>
+
+<script src="/js/show-password.js"></script>
 
 <%- include('partials/footer') -%>

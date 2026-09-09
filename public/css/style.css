@@ -2,7 +2,73 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Light/dark pairs: show only the variant matching the active theme.
+   The light variant is the fallback if JS never sets data-theme. */
+.logo-dark,
+.theme-icon-to-light {
+    display: none;
+}
+
+[data-theme="forest"] .logo-dark {
+    display: block;
+}
+
+[data-theme="forest"] .logo-light {
+    display: none;
+}
+
+[data-theme="forest"] .theme-icon-to-light {
+    display: inline-block;
+}
+
+[data-theme="forest"] .theme-icon-to-dark {
+    display: none;
+}
+
+[hidden] {
+    display: none !important;
+}
+
+.join input,
+.input-group input,
+.input-group select {
+    display: inline-flex;
+}
+
+/* daisyUI hard-codes a pill radius on these, so pull them back to the
+   theme's button radius. Everything else follows --rounded-box/--rounded-btn. */
+@layer components {
+  .btn-circle,
+  .btn-square,
+  .avatar img,
+  .avatar > div,
+  .checkbox,
+  .toggle,
+  .toggle:before {
+    border-radius: var(--rounded-btn, 0.25rem);
+  }
+
+  /* Vendor-prefixed slider parts stay in their own rules: a browser throws out
+     the whole selector list if it does not recognise one of the selectors. */
+  .range::-webkit-slider-thumb,
+  .range::-webkit-slider-runnable-track {
+    border-radius: var(--rounded-btn, 0.25rem);
+  }
+
+  .range::-moz-range-thumb {
+    border-radius: var(--rounded-btn, 0.25rem);
+  }
+
+  .range::-moz-range-track {
+    border-radius: var(--rounded-btn, 0.25rem);
+  }
+}
+
 /* Set transparent background image without affecting other elements' opacity*/
+.bkg {
+    isolation: isolate;
+}
+
 .bkg::before{
     content:"";
     opacity:0.5;
@@ -15,7 +81,7 @@
     left:0;
     width:100%;
     height:auto;
-    z-index:-3;
+    z-index:-1;
 }
 /* Serve different bkg images based on device size */
 

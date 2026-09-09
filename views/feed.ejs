@@ -1,0 +1,108 @@
+<%- include('partials/header') -%>
+<%
+  const activeTrips = trips.filter(trip => !trip.checkedIn);
+  const completedTrips = trips.filter(trip => trip.checkedIn);
+  const formatDate = date => new Intl.DateTimeFormat('en-US', {
+    dateStyle: 'medium',
+    timeStyle: 'short'
+  }).format(new Date(date));
+  const ownerName = trip => {
+    const owner = trip.user || {};
+    return owner.realName || owner.userName || 'Friend';
+  };
+  const ownerHandle = trip => (trip.user && trip.user.userName) || '';
+%>
+
+<main class="bkg bkg-bridge min-h-[calc(100vh-4rem)] px-4 py-8 sm:px-6 sm:py-12">
+  <div class="container max-w-6xl">
+    <section class="rounded-3xl border border-white/20 bg-base-100/90 p-5 shadow-2xl backdrop-blur-md sm:p-8">
+      <div class="border-b border-base-300 pb-7">
+        <p class="mb-2 text-sm font-semibold uppercase tracking-widest text-primary">Friends</p>
+        <h1 class="text-3xl font-bold sm:text-4xl">Friends' trips</h1>
+        <p class="mt-2 max-w-2xl text-base-content/70">
+          See when friends are out, overdue, or back — only for trips they chose to share.
+        </p>
+      </div>
+
+      <% if (friendCount === 0) { %>
+        <div class="mx-auto flex max-w-xl flex-col items-center py-14 text-center sm:py-20">
+          <h2 class="text-2xl font-bold">Add friends to watch their check-ins</h2>
+          <p class="mt-3 text-base-content/70">
+            Search for a username, send a request, and they can share trips with you after you both accept.
+          </p>
+          <a href="/friends" class="btn btn-primary btn-lg mt-7">Find friends</a>
+        </div>
+      <% } else if (trips.length === 0) { %>
+        <div class="mx-auto flex max-w-xl flex-col items-center py-14 text-center sm:py-20">
+          <h2 class="text-2xl font-bold">No shared trips yet</h2>
+          <p class="mt-3 text-base-content/70">
+            Your friends have not shared a trip. Private trips never appear here.
+          </p>
+        </div>
+      <% } else { %>
+        <section class="py-8" aria-labelledby="active-friends-trips-heading">
+          <div class="mb-5 flex items-center justify-between">
+            <h2 id="active-friends-trips-heading" class="text-2xl font-bold">Out now</h2>
+            <span class="badge badge-primary badge-outline"><%= activeTrips.length %> active</span>
+          </div>
+
+          <% if (activeTrips.length === 0) { %>
+            <div class="rounded-2xl border border-dashed border-base-content/25 bg-base-200/60 p-8 text-center">
+              <p class="font-semibold">No friends are currently out on a shared trip.</p>
+            </div>
+          <% } else { %>
+            <div class="grid gap-5 lg:grid-cols-2">
+              <% activeTrips.forEach(trip => { const isOverdue = new Date(trip.returnTime) < new Date(); %>
+                <article class="card border <%= isOverdue ? 'border-error/60 bg-error/10' : 'border-primary/40 bg-base-200/80' %> shadow-lg">
+                  <div class="card-body">
+                    <div class="flex items-start justify-between gap-3">
+                      <div>
+                        <span class="badge <%= isOverdue ? 'badge-error' : 'badge-primary' %> mb-3">
+                          <%= isOverdue ? 'Overdue' : 'Active' %>
+                        </span>
+                        <h3 class="card-title text-2xl"><%= trip.location %></h3>
+                        <p class="text-sm text-base-content/70">
+                          <%= ownerName(trip) %><% if (ownerHandle(trip)) { %> · @<%= ownerHandle(trip) %><% } %>
+                        </p>
+                      </div>
+                      <span class="badge badge-outline"><%= trip.tripType || 'Trip' %></span>
+                    </div>
+                    <div class="mt-2 flex items-start gap-3">
+                      <i class="far fa-clock mt-1 text-primary" aria-hidden="true"></i>
+                      <div>
+                        <p class="text-xs font-semibold uppercase tracking-wide text-base-content/50">Expected return</p>
+                        <p class="font-semibold"><%= formatDate(trip.returnTime) %></p>
+                      </div>
+                    </div>
+                    <% if (trip.details) { %>
+                      <p class="mt-2 text-base-content/70"><%= trip.details %></p>
+                    <% } %>
+                  </div>
+                </article>
+              <% }) %>
+            </div>
+          <% } %>
+        </section>
+
+        <% if (completedTrips.length > 0) { %>
+          <section class="border-t border-base-300 pt-8" aria-labelledby="completed-friends-trips-heading">
+            <h2 id="completed-friends-trips-heading" class="mb-5 text-xl font-bold">Checked in</h2>
+            <div class="grid gap-3 sm:grid-cols-2">
+              <% completedTrips.forEach(trip => { %>
+                <article class="rounded-xl bg-base-200/70 p-4">
+                  <h3 class="truncate font-bold"><%= trip.location %></h3>
+                  <p class="text-sm text-base-content/60">
+                    <%= ownerName(trip) %> · <%= trip.tripType || 'Trip' %> · <%= formatDate(trip.returnTime) %>
+                  </p>
+                  <span class="badge badge-success badge-outline mt-2">Checked in</span>
+                </article>
+              <% }) %>
+            </div>
+          </section>
+        <% } %>
+      <% } %>
+    </section>
+  </div>
+</main>
+
+<%- include('partials/footer') -%>

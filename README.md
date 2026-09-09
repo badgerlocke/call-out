@@ -16,9 +16,17 @@ Try it out here:
 - Create a `.env` file in config folder and add the following as `key = value`
   - PORT = 3000 (can be any port)
   - DB_STRING = `your database URI`
+  - SESSION_SECRET = `a long random string`
+  - APP_URL = `the public HTTPS origin, for example https://callout.example`
+  - NODE_ENV = `production` (on the deployed server; enables secure cookies)
   - GOOGLE_CLIENT_ID = `your google cloud oauth2 client id`
   - GOOGLE_CLIENT_SECRET = `your google cloud oauth2 client secret`
 
+- For password resets and optional account-holder email alerts, add:
+  - EMAIL = `your Gmail address`
+  - EMAIL_PW = `your Gmail app password`
+  - USER_ALERTS_ENABLED = `true` (defaults to true when both email values exist)
+  - CONTACT_ALERTS_ENABLED = `false` (contact alerts are dry-run only by default)
 
 - (Optional) For SMS capability, add auth codes for Twilio
   - TWILIO_ACCOUNT_SID
@@ -31,10 +39,13 @@ Try it out here:
 
 `npm start`
 
+To rebuild CSS after changing Tailwind or DaisyUI:
+
+`npm run build:css`
+
 # Future improvements
 
 - Show active and completed trips separately
-- Change the ugly time inputs on 'new trip' page
 - Set up chron and re-enable email/SMS messages
 - Add checkin link in reminder email
 - Create profile page where user can update their details, contacts, etc

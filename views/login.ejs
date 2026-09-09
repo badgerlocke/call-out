@@ -1,44 +1,103 @@
-<%- include('partials/header') -%>
+<%- include('partials/header-no-logo') -%>
+  <main class="bkg bkg-sunset">
+    <section class="h-full md:h-screen">
+      <div class="container py-12 px-6 h-full">
+        <div class="flex justify-center items-center flex-wrap h-full g-6 text-base-content">
+          <div class="xl:w-10/12">
+            <div class="block bg-base-100/90 shadow-lg">
+              <div class="lg:flex lg:flex-wrap g-0">
+                <div class="lg:w-6/12 px-4 md:px-0">
+                  <div class="md:p-12 md:mx-6">
+                    <div class="text-center">
+                      <img
+                        class="logo-light mx-auto w-48"
+                        src="/logo/logo-400px.png"
+                        alt="Call Out"
+                      />
+                      <img
+                        class="logo-dark mx-auto w-48"
+                        src="/logo/logo1/vector/default-monochrome-white.svg"
+                        alt="Call Out"
+                      />
+                    </div>
 
-<main class="container">
-  <div class="">
-    <section class="">
-      <% if (locals.messages.errors) { %> <% messages.errors.forEach( el => { %>
-      <div class="alert alert-danger"><%= el.msg %></div>
-      <% }) %> <% } %> <% if (locals.messages.info) { %> <%
-      messages.info.forEach( el => { %>
-      <div class="alert alert-info"><%= el.msg %></div>
-      <% }) %> <% } %>
-      <div class="divider my-5"></div>
-      <!-- <h2><a href="/auth/google" class="btn btn-primary">
-          <i class="fab fa-google left"></i> Log In With Google
-      </a></h2> -->
-      <form action="/login" method="POST">
-        <div class="">
-          <label for="exampleInputEmail1" class="form-label"
-            >Email address</label
-          >
-          <input
-            type="email"
-            class="form-control"
-            id="exampleInputEmail1"
-            aria-describedby="emailHelp"
-            name="email"
-          />
+                    <%- include('partials/flash-messages') -%>
+
+                    <form action="/login" method="POST" class="space-y-4">
+                      <p>Log in to your account</p>
+                      <div>
+                        <label for="email" class="label-text">Email address</label>
+                        <input
+                          type="email"
+                          class="input input-bordered w-full"
+                          id="email"
+                          name="email"
+                          autocomplete="email"
+                          required
+                        />
+                      </div>
+                      <div>
+                        <label for="password" class="label-text">Password</label>
+                        <input
+                          type="password"
+                          class="input input-bordered w-full"
+                          id="password"
+                          name="password"
+                          autocomplete="current-password"
+                          data-password
+                          required
+                        />
+                        <label class="label cursor-pointer justify-start gap-2 py-1">
+                          <input type="checkbox" class="checkbox checkbox-sm" data-show-password />
+                          <span class="label-text">Show password</span>
+                        </label>
+                        <a href="/forgot-password" class="link link-primary mt-1 inline-block text-sm">
+                          Forgot password?
+                        </a>
+                      </div>
+                      <button type="submit" class="btn btn-primary w-full">Log in</button>
+                    </form>
+
+                    <% if (locals.googleAuthEnabled) { %>
+                      <div class="divider">or</div>
+                      <a href="/auth/google" class="btn btn-outline w-full">
+                        <i class="fab fa-google" aria-hidden="true"></i>
+                        Log in with Google
+                      </a>
+                    <% } %>
+
+                    <p class="mt-6 text-center">
+                      Don't have an account?
+                      <a href="/signup" class="link link-primary font-semibold">Sign up</a>
+                    </p>
+                  </div>
+                </div>
+                <div
+                  class="lg:w-6/12 flex items-center lg:rounded-r-lg rounded-b-lg lg:rounded-bl-none bg-gradient-to-r bg-green-800 bg-opacity-75 "
+                >
+                  <div class="text-white px-4 py-6 md:p-12 md:mx-6">
+                    <h4 class="text-xl font-semibold mb-6">Making sure you come home safe</h4>
+                    <p class="text-sm">
+                      The term "call out" comes from the caving community, where cavers contact others once they've returned to the surface. Caves are unpredictable and dangerous, and a group that is underground significantly longer than they planned may need to be rescued. 
+                    </p>
+                    <br>
+                    <p class="text-sm">
+                      Call Out is a platform to automate this system for users of all kinds. It can be used for any activity, outdoors or otherwise.
+                    </p>
+                    <br>
+                    <p class="text-sm font-semibold">
+                      In this demo, we email you if you miss check-in. We do not message your contacts yet.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
-        <div class="">
-          <label for="exampleInputPassword1" class="form-label">Password</label>
-          <input
-            type="password"
-            class="form-control"
-            id="exampleInputPassword1"
-            name="password"
-          />
-        </div>
-        <button type="submit" class="btn btn-primary">Submit</button>
-      </form>
+      </div>
     </section>
-  </div>
 </main>
+
+<script src="/js/show-password.js"></script>
 
 <%- include('partials/footer') -%>

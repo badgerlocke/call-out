@@ -1,5 +1,12 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="">
+<html
+  lang="en"
+  data-theme="<%= locals.user && user.theme ? user.theme : 'light' %>"
+  <% if (locals.user) { %>
+    <% if (user.theme) { %>data-account-theme="<%= user.theme %>"<% } %>
+    data-theme-sync-url="/settings/theme"
+  <% } %>
+>
   <head>
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
@@ -17,28 +24,55 @@
       integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w=="
       crossorigin="anonymous">
     <link href="/css/output.css" rel="stylesheet">
+    <script src="/js/theme.js"></script>
   </head>
-  <!-- <body  class="m-0"> -->
-    <body class="bg-hero bg-no-repeat bg-cover bg-center bg-fixed">
-      <div>
-      <header class="m-6 flex items-center justify-center">
-        <div class="">
-          <img src="logo/logo-400px.png" alt="Call Out logo">
+  <body class="min-h-screen bg-base-300 text-base-content">
+    <header class="sticky top-0 z-20 border-b border-base-content/15 bg-base-100/95 text-base-content shadow-lg backdrop-blur">
+      <nav class="navbar container min-h-16 px-4" aria-label="Main navigation">
+        <div class="navbar-start">
+          <a href="/" class="focus:outline-none focus:ring-2 focus:ring-primary" aria-label="Call Out home">
+            <img class="logo-light w-36 sm:w-44" src="/logo/logo-400px.png" alt="Call Out">
+            <img class="logo-dark w-36 sm:w-44" src="/logo/logo1/vector/default-monochrome-white.svg" alt="Call Out">
+          </a>
         </div>
-        <div class="">
-          <%// if (user && user.profilePicture) { %> 
-            <!-- <img src="<%=//user.profilePicture%>" alt="profile picture"> -->
-          <!-- <%//} else {%> -->
-            <!-- <i class="fa fa-solid fa-tree text-5xl align-bottom mx-4"></i> -->
-          <!-- <%//}%> -->
-          <!-- <span class="mx-4 text-2xl align-middle"><%=// user.realName%></span> -->
-          <!-- <a href="/logout" class="btn btn-primary mx-4">Logout</a> -->
-        </div>
-      </header>
 
-        <!-- <h1 class="font-medium leading-tight text-5xl prose">  <i class="fa fa-solid fa-tree"></i> <a href="/home" class="no-underline">Call Out</a> <i class="fa fa-solid fa-tree"></i></h1> -->
-        <!-- <i class="fa fa-solid fa-mountain-sun"></i> -->
-        <!-- Subtitle ideas: -->
-        <!-- <span>Improving safety for outdoor enthusiasts</span> -->
-        <!-- <span>Be safe wherever you go</span> -->
-        <!-- <span>All trails eventually lead home</span> -->
+        <div class="navbar-end gap-1 sm:gap-2">
+          <% if (locals.user) { %>
+            <a href="/" class="btn btn-ghost btn-sm hidden sm:inline-flex">My trips</a>
+            <a href="/feed" class="btn btn-ghost btn-sm hidden sm:inline-flex">Friends' trips</a>
+            <a href="/friends" class="btn btn-ghost btn-sm hidden sm:inline-flex">Friends</a>
+            <a href="/trips/newtrip" class="btn btn-primary btn-sm js-open-new-trip">
+              <i class="fas fa-plus" aria-hidden="true"></i>
+              <span class="hidden sm:inline">New trip</span>
+            </a>
+          <% } %>
+
+          <%- include('theme-toggle') -%>
+
+          <% if (locals.user) { %>
+            <div class="dropdown dropdown-end">
+              <button tabindex="0" class="btn btn-ghost btn-circle" aria-label="Open account menu">
+                <i class="fas fa-user" aria-hidden="true"></i>
+              </button>
+              <ul tabindex="0" class="menu dropdown-content z-30 mt-3 w-52 rounded-box bg-base-100 p-2 shadow-xl">
+                <li class="menu-title">
+                  <span><%= user.realName || user.userName || 'Account' %></span>
+                </li>
+                <li><a href="/">My trips</a></li>
+                <li><a href="/feed">Friends' trips</a></li>
+                <li><a href="/friends">Friends</a></li>
+                <li><a href="/settings">Settings</a></li>
+                <li><a href="/logout">Log out</a></li>
+              </ul>
+            </div>
+          <% } %>
+        </div>
+      </nav>
+    </header>
+    <div class="container max-w-xl px-4 pt-4">
+      <%- include('flash-messages') -%>
+    </div>
+    <% if (locals.user) { %>
+      <%- include('new-trip-modal') %>
+      <script src="/js/newtrip.js"></script>
+    <% } %>

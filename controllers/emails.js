@@ -1,39 +1,56 @@
-//Contains email wordings
-require('dotenv').config({path: './config/.env'})
-const Trips = require('../models/Trip')
-const Users = require('../models/User')
+// Contains alert email wording.
+const Users = require("../models/User");
+const { escapeHtml } = require("../utils/html");
 
 async function findUser(trip) {
-    try {
-        let user = await Users.findById({_id: trip.user})
-        return user
-    } catch (error) {
-        console.error(error)
-        return 'error'
-    }
+  return Users.findById(trip.user);
+}
+
+function senderAddress() {
+  return process.env.EMAIL
+    ? `"Call Out App" <${process.env.EMAIL}>`
+    : "Call Out App";
+}
+
+async function resolveUser(trip, user) {
+  return user || findUser(trip);
 }
 
 module.exports = {
-    reminderEmail: async (trip) => {    
-        let user = await findUser(trip);
-        return {
-            from: 'Call Out App', // sender address
-            to: user.email, // list of receivers
-            subject: "Reminder to check in", // Subject line
-            text: `Please log in to your Call Out account to check in after your trip! We will notify your contacts if you haven't checked in by ${trip.notifyTime}`, // plain text body
-            html: `<h1>Please log in to your Call Out account to check in after your trip! We will notify your contacts if you haven't checked in by ${trip.notifyTime}</h1>`, // html body
-        }
-    },
-    lateTripEmail: async (trip) => {    
-        let user = await findUser(trip);
-        let words = `Please check on ${user.userName}. They have not checked in after their trip, which was expected to return at ${trip.notifyTime}`
-        return {
-            from: 'Call Out App', // sender address 
-            to: `${user.email}, ${user.contacts}`, // list of receivers
-            subject: `It's ${new Date}, do you know where you friends are?`, // Subject line
-            text: words, // plain text body
-            html: `<h1>${words}</h1>`, // html body
-        }
-    }
-}
+  reminderEmail: async (trip, suppliedUser) => {
+    const user = await resolveUser(trip, suppliedUser);
+    const words = `Your trip was expected to return at ${trip.returnTime}. Please log in to Call Out and check in before ${trip.notifyTime}.`;
+    return {
+      from: senderAddress(),
+      to: user.email,
+      subject: "Reminder to check in",
+      text: words,
+      html: `<p>${escapeHtml(words)}</p>`,
+    };
+  },
+
+  overdueEmail: async (trip, suppliedUser) => {
+    const user = await resolveUser(trip, suppliedUser);
+    const words = `You have not checked in for your trip that was expected to return at ${trip.returnTime}. Please log in to Call Out and check in as soon as you are safe.`;
+    return {
+      from: senderAddress(),
+      to: user.email,
+      subject: "You are overdue — please check in",
+      text: words,
+      html: `<p>${escapeHtml(words)}</p>`,
+    };
+  },
+
+  contactSosEmail: (trip, user, contacts) => {
+    const displayName = user.realName || user.userName || "A Call Out user";
+    const words = `Please check on ${displayName}. They have not checked in for a trip that was expected to return at ${trip.returnTime}.`;
+    return {
+      from: senderAddress(),
+      to: contacts.map((contact) => contact.email),
+      subject: `${displayName} has not checked in`,
+      text: words,
+      html: `<p>${escapeHtml(words)}</p>`,
+    };
+  },
+};
 

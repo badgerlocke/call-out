@@ -1,0 +1,290 @@
+<%- include('partials/header') -%>
+
+<main class="container max-w-5xl px-4 py-8 sm:py-12">
+  <div class="mb-8">
+    <p class="text-sm font-semibold uppercase tracking-widest text-primary">Account</p>
+    <h1 class="mt-1 text-3xl font-bold sm:text-4xl">Settings</h1>
+    <p class="mt-2 text-base-content/70">Manage your account and emergency contacts.</p>
+  </div>
+
+  <div class="grid gap-6 lg:grid-cols-[14rem_minmax(0,1fr)]">
+    <nav class="menu h-fit border border-base-content/15 bg-base-100 p-3 shadow" aria-label="Settings sections">
+      <li><a href="#profile">Profile</a></li>
+      <li><a href="#password">Password</a></li>
+      <li><a href="#privacy">Privacy</a></li>
+      <li><a href="#appearance">Appearance</a></li>
+      <li><a href="#contacts">Emergency contacts</a></li>
+    </nav>
+
+    <div class="space-y-6">
+      <section id="profile" class="card scroll-mt-24 border border-base-content/15 bg-base-100 shadow">
+        <div class="card-body">
+          <h2 class="card-title text-2xl">Profile</h2>
+          <form action="/settings/profile?_method=PUT" method="POST" class="mt-3 space-y-4">
+            <div>
+              <label for="realName" class="label-text">Display name</label>
+              <input
+                id="realName"
+                name="realName"
+                type="text"
+                class="input input-bordered mt-1 w-full"
+                value="<%= user.realName || '' %>"
+                maxlength="100"
+                autocomplete="name"
+                required
+              />
+            </div>
+            <div>
+              <label for="accountEmail" class="label-text">Email address</label>
+              <input
+                id="accountEmail"
+                type="email"
+                class="input input-bordered mt-1 w-full"
+                value="<%= user.email || '' %>"
+                disabled
+              />
+              <p class="mt-1 text-sm text-base-content/60">
+                Email changes require verification and are not available yet.
+              </p>
+            </div>
+            <div>
+              <label for="userName" class="label-text">Username</label>
+              <label class="input input-bordered mt-1 flex w-full items-center gap-1">
+                <span class="text-base-content/50">@</span>
+                <input
+                  id="userName"
+                  name="userName"
+                  type="text"
+                  class="grow border-0 bg-transparent focus:outline-none"
+                  value="<%= user.userName || '' %>"
+                  minlength="3"
+                  maxlength="20"
+                  pattern="[A-Za-z0-9_ ]{3,20}"
+                  autocomplete="username"
+                  spellcheck="false"
+                  required
+                />
+              </label>
+              <p class="mt-1 text-sm text-base-content/60">
+                3–20 characters. Lowercase letters, numbers, and underscores; spaces become underscores.
+              </p>
+            </div>
+            <div class="card-actions justify-end">
+              <button type="submit" class="btn btn-primary">Save profile</button>
+            </div>
+          </form>
+        </div>
+      </section>
+
+      <section id="password" class="card scroll-mt-24 border border-base-content/15 bg-base-100 shadow">
+        <div class="card-body">
+          <h2 class="card-title text-2xl"><%= hasPassword ? 'Change password' : 'Set a password' %></h2>
+          <% if (!hasPassword) { %>
+            <p class="text-base-content/70">
+              Add a password to log in with your email as well as Google.
+            </p>
+          <% } %>
+          <form action="/settings/password?_method=PUT" method="POST" class="mt-3 space-y-4">
+            <% if (hasPassword) { %>
+              <div>
+                <label for="currentPassword" class="label-text">Current password</label>
+                <input
+                  id="currentPassword"
+                  name="currentPassword"
+                  type="password"
+                  class="input input-bordered mt-1 w-full"
+                  autocomplete="current-password"
+                  data-password
+                  required
+                />
+              </div>
+            <% } %>
+            <div>
+              <label for="password" class="label-text">New password</label>
+              <input
+                id="password"
+                name="password"
+                type="password"
+                class="input input-bordered mt-1 w-full"
+                minlength="8"
+                autocomplete="new-password"
+                data-password
+                required
+              />
+            </div>
+            <div>
+              <label for="confirmPassword" class="label-text">Confirm new password</label>
+              <input
+                id="confirmPassword"
+                name="confirmPassword"
+                type="password"
+                class="input input-bordered mt-1 w-full"
+                minlength="8"
+                autocomplete="new-password"
+                data-password
+                required
+              />
+              <label class="label cursor-pointer justify-start gap-2 py-2">
+                <input type="checkbox" class="checkbox checkbox-sm" data-show-password />
+                <span class="label-text">Show passwords</span>
+              </label>
+            </div>
+            <div class="card-actions justify-end">
+              <button type="submit" class="btn btn-primary">
+                <%= hasPassword ? 'Change password' : 'Set password' %>
+              </button>
+            </div>
+          </form>
+        </div>
+      </section>
+
+      <section id="privacy" class="card scroll-mt-24 border border-base-content/15 bg-base-100 shadow">
+        <div class="card-body">
+          <h2 class="card-title text-2xl">Trip privacy</h2>
+          <p class="text-base-content/70">
+            New trips are private unless you choose otherwise. Friends never see a trip you keep private.
+          </p>
+          <form action="/settings/privacy?_method=PUT" method="POST" class="mt-3 space-y-3">
+            <label class="label cursor-pointer justify-start gap-3">
+              <input
+                type="radio"
+                name="tripVisibilityDefault"
+                value="private"
+                class="radio radio-primary"
+                <%= !user.tripVisibilityDefault || user.tripVisibilityDefault === 'private' ? 'checked' : '' %>
+              />
+              <span class="label-text">Private by default</span>
+            </label>
+            <label class="label cursor-pointer justify-start gap-3">
+              <input
+                type="radio"
+                name="tripVisibilityDefault"
+                value="friends"
+                class="radio radio-primary"
+                <%= user.tripVisibilityDefault === 'friends' ? 'checked' : '' %>
+              />
+              <span class="label-text">Share new trips with friends</span>
+            </label>
+            <div class="card-actions justify-end">
+              <button type="submit" class="btn btn-primary">Save privacy</button>
+            </div>
+          </form>
+        </div>
+      </section>
+
+      <section id="appearance" class="card scroll-mt-24 border border-base-content/15 bg-base-100 shadow">
+        <div class="card-body">
+          <h2 class="card-title text-2xl">Appearance</h2>
+          <p class="text-base-content/70">Your theme is saved to your account and follows you when you log in.</p>
+          <div class="mt-3 grid gap-3 sm:grid-cols-2" role="group" aria-label="Theme">
+            <button type="button" class="btn btn-outline justify-start" data-theme-choice="light">
+              <i class="fas fa-sun" aria-hidden="true"></i>
+              Light
+            </button>
+            <button type="button" class="btn btn-outline justify-start" data-theme-choice="forest">
+              <i class="fas fa-moon" aria-hidden="true"></i>
+              Dark
+            </button>
+          </div>
+          <p class="text-sm text-error" data-theme-error hidden>Theme could not be saved. Try again.</p>
+        </div>
+      </section>
+
+      <section id="contacts" class="card scroll-mt-24 border border-base-content/15 bg-base-100 shadow">
+        <div class="card-body">
+          <div class="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
+            <div>
+              <h2 class="card-title text-2xl">Emergency contacts</h2>
+              <p class="mt-1 text-base-content/70">
+                In this demo, we email you if you miss check-in. We do not message your contacts yet.
+              </p>
+            </div>
+            <span class="badge badge-warning badge-outline whitespace-nowrap">Notifications off</span>
+          </div>
+
+          <% if (user.emergencyContacts.length) { %>
+            <div class="mt-5 space-y-3">
+              <% user.emergencyContacts.forEach(contact => { %>
+                <details class="collapse collapse-arrow border border-base-content/15 bg-base-200/50">
+                  <summary class="collapse-title">
+                    <span class="font-bold"><%= contact.name %></span>
+                    <span class="ml-2 text-sm text-base-content/60">
+                      <%= contact.relationship || contact.email || contact.phone %>
+                    </span>
+                  </summary>
+                  <div class="collapse-content">
+                    <form action="/settings/contacts/<%= contact.id %>?_method=PUT" method="POST" class="grid gap-4 sm:grid-cols-2">
+                      <div>
+                        <label for="name-<%= contact.id %>" class="label-text">Name</label>
+                        <input id="name-<%= contact.id %>" name="name" type="text" class="input input-bordered mt-1 w-full" value="<%= contact.name %>" maxlength="100" required />
+                      </div>
+                      <div>
+                        <label for="relationship-<%= contact.id %>" class="label-text">Relationship</label>
+                        <input id="relationship-<%= contact.id %>" name="relationship" type="text" class="input input-bordered mt-1 w-full" value="<%= contact.relationship || '' %>" maxlength="100" />
+                      </div>
+                      <div>
+                        <label for="email-<%= contact.id %>" class="label-text">Email</label>
+                        <input id="email-<%= contact.id %>" name="email" type="email" class="input input-bordered mt-1 w-full" value="<%= contact.email || '' %>" maxlength="254" />
+                      </div>
+                      <div>
+                        <label for="phone-<%= contact.id %>" class="label-text">Phone</label>
+                        <input id="phone-<%= contact.id %>" name="phone" type="tel" class="input input-bordered mt-1 w-full" value="<%= contact.phone || '' %>" maxlength="40" />
+                      </div>
+                      <div class="sm:col-span-2">
+                        <label for="notes-<%= contact.id %>" class="label-text">Notes</label>
+                        <textarea id="notes-<%= contact.id %>" name="notes" class="textarea textarea-bordered mt-1 w-full" maxlength="1000"><%= contact.notes || '' %></textarea>
+                      </div>
+                      <p class="text-sm text-base-content/60 sm:col-span-2">Status: Not notified (demo)</p>
+                      <div class="flex flex-wrap justify-end gap-2 sm:col-span-2">
+                        <button type="submit" class="btn btn-primary btn-sm">Save contact</button>
+                      </div>
+                    </form>
+                    <form action="/settings/contacts/<%= contact.id %>?_method=DELETE" method="POST" class="mt-2 flex justify-end" data-confirm="Delete this emergency contact?">
+                      <button type="submit" class="btn btn-ghost btn-sm text-error">Delete contact</button>
+                    </form>
+                  </div>
+                </details>
+              <% }) %>
+            </div>
+          <% } else { %>
+            <div class="mt-5 border border-dashed border-base-content/25 bg-base-200/50 p-5 text-center text-base-content/70">
+              No emergency contacts added yet.
+            </div>
+          <% } %>
+
+          <div class="divider">Add a contact</div>
+          <form action="/settings/contacts" method="POST" class="grid gap-4 sm:grid-cols-2">
+            <div>
+              <label for="contactName" class="label-text">Name</label>
+              <input id="contactName" name="name" type="text" class="input input-bordered mt-1 w-full" maxlength="100" required />
+            </div>
+            <div>
+              <label for="contactRelationship" class="label-text">Relationship</label>
+              <input id="contactRelationship" name="relationship" type="text" class="input input-bordered mt-1 w-full" maxlength="100" />
+            </div>
+            <div>
+              <label for="contactEmail" class="label-text">Email</label>
+              <input id="contactEmail" name="email" type="email" class="input input-bordered mt-1 w-full" maxlength="254" />
+            </div>
+            <div>
+              <label for="contactPhone" class="label-text">Phone</label>
+              <input id="contactPhone" name="phone" type="tel" class="input input-bordered mt-1 w-full" maxlength="40" />
+            </div>
+            <div class="sm:col-span-2">
+              <label for="contactNotes" class="label-text">Notes</label>
+              <textarea id="contactNotes" name="notes" class="textarea textarea-bordered mt-1 w-full" maxlength="1000"></textarea>
+              <p class="mt-1 text-sm text-base-content/60">An email or phone number is required.</p>
+            </div>
+            <div class="card-actions justify-end sm:col-span-2">
+              <button type="submit" class="btn btn-primary">Add contact</button>
+            </div>
+          </form>
+        </div>
+      </section>
+    </div>
+  </div>
+</main>
+
+<script src="/js/show-password.js"></script>
+<script src="/js/confirm-submit.js"></script>
+<%- include('partials/footer') -%>

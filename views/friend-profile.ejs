@@ -1,0 +1,17 @@
+<%- include('partials/header') -%>
+
+<main class="container max-w-xl px-4 py-8 sm:py-12">
+  <p class="text-sm font-semibold uppercase tracking-widest text-primary">Profile</p>
+  <h1 class="mt-1 text-3xl font-bold"><%= profile.realName || profile.userName %></h1>
+  <p class="mt-1 text-base-content/70">@<%= profile.userName %></p>
+  <p class="mt-4 text-sm text-base-content/70">
+    Trip details stay private unless they share a trip with friends.
+  </p>
+  <div class="mt-6">
+    <%- include('partials/friend-row', { person: profile, showProfileLink: false }) %>
+  </div>
+  <a href="/friends" class="btn btn-ghost mt-6">Back to friends</a>
+</main>
+
+<script src="/js/confirm-submit.js"></script>
+<%- include('partials/footer') -%>
