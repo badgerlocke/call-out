@@ -6,18 +6,27 @@ const Friendship = require("../models/Friendship");
 const { backfillDefaultFriendships } = require("../utils/default-friend");
 const { userNameMatchRegex } = require("../utils/username");
 
-async function main() {
-  const userName = String(
-    process.argv[2] || process.env.DEFAULT_FRIEND_USERNAME || "badgerlocke"
-  )
+function resolveAdminUserName(argv = process.argv, env = process.env) {
+  const raw = argv[2] || env.ADMIN_USERNAME || "";
+  const userName = String(raw)
     .replace(/^@/, "")
+    .trim()
     .toLowerCase();
+  if (!userName) {
+    throw new Error(
+      "Usage: node scripts/bootstrap-admin.js <adminUsername> (or set ADMIN_USERNAME)."
+    );
+  }
+  return userName;
+}
+
+async function main() {
+  const userName = resolveAdminUserName();
 
   if (!process.env.DB_STRING) {
     throw new Error("DB_STRING is required.");
   }
 
-  process.env.DEFAULT_FRIEND_USERNAME = userName;
   await mongoose.connect(process.env.DB_STRING);
   await Promise.all([User.syncIndexes(), Friendship.syncIndexes()]);
 
@@ -42,11 +51,17 @@ async function main() {
   );
 }
 
-main()
-  .catch((error) => {
-    console.error(error.message);
-    process.exitCode = 1;
-  })
-  .finally(async () => {
-    await mongoose.disconnect();
-  });
+if (require.main === module) {
+  main()
+    .catch((error) => {
+      console.error(error.message);
+      process.exitCode = 1;
+    })
+    .finally(async () => {
+      await mongoose.disconnect();
+    });
+}
+
+module.exports = {
+  resolveAdminUserName,
+};

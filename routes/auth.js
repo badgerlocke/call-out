@@ -16,7 +16,7 @@ if (googleAuthEnabled) {
     '/google/callback',
     passport.authenticate('google', {
       failureRedirect: '/login',
-      failureFlash: true,
+      failureFlash: { type: 'errors' },
     }),
     (req, res) => {
       res.redirect('/')

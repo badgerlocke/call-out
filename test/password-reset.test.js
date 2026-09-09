@@ -3,6 +3,7 @@ const assert = require("node:assert/strict");
 
 const {
   RESET_TOKEN_TTL_MS,
+  canIssuePasswordReset,
   createResetToken,
   hashResetToken,
   isResetToken,
@@ -56,6 +57,12 @@ test("password reset links require a configured origin in production", () => {
     () => resetUrl(req, "abc123", { NODE_ENV: "production" }),
     /APP_URL is required/
   );
+});
+
+test("password reset is not issued for missing or banned accounts", () => {
+  assert.equal(canIssuePasswordReset(null), false);
+  assert.equal(canIssuePasswordReset({ bannedAt: new Date() }), false);
+  assert.equal(canIssuePasswordReset({ bannedAt: null }), true);
 });
 
 test("password reset is configured only when email credentials exist", () => {

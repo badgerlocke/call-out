@@ -11,6 +11,10 @@ function passwordResetConfigured(env = process.env) {
   return Boolean(env.EMAIL && env.EMAIL_PW);
 }
 
+function canIssuePasswordReset(user) {
+  return Boolean(user && !user.bannedAt);
+}
+
 function hashResetToken(token) {
   return crypto.createHash("sha256").update(token).digest("hex");
 }
@@ -38,6 +42,7 @@ function resetUrl(req, token, env = process.env) {
 
 module.exports = {
   RESET_TOKEN_TTL_MS,
+  canIssuePasswordReset,
   createResetToken,
   hashResetToken,
   isResetToken,

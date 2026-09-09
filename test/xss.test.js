@@ -50,6 +50,18 @@ test("EJS flash messages escape stored HTML", () => {
   assert.match(html, /&lt;img/);
 });
 
+test("EJS flash messages also render Passport's error key", () => {
+  const file = path.join(__dirname, "../views/partials/flash-messages.ejs");
+  const html = ejs.render(
+    fs.readFileSync(file, "utf8"),
+    { messages: { error: ["This account is banned."] } },
+    { filename: file }
+  );
+
+  assert.match(html, /This account is banned\./);
+  assert.match(html, /alert-error/);
+});
+
 test("EJS attribute values escape quotes from user names", () => {
   const html = ejs.render('<input value="<%= name %>">', {
     name: '" autofocus onfocus=alert(1) x="',

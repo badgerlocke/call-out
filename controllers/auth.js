@@ -5,6 +5,7 @@ const validator = require("validator");
 const User = require("../models/User");
 const { uniqueUserName } = require("../utils/username");
 const {
+  canIssuePasswordReset,
   createResetToken,
   hashResetToken,
   isResetToken,
@@ -135,7 +136,7 @@ exports.postForgotPassword = async (req, res, next) => {
       });
       const user = await User.findOne({ email: normalizedEmail });
 
-      if (user) {
+      if (canIssuePasswordReset(user)) {
         const reset = createResetToken();
         user.resetPasswordToken = reset.tokenHash;
         user.resetPasswordExpires = reset.expiresAt;
@@ -181,7 +182,7 @@ exports.getResetPassword = async (req, res, next) => {
       resetPasswordExpires: { $gt: new Date() },
     });
 
-    if (!user) {
+    if (!canIssuePasswordReset(user)) {
       req.flash("errors", {
         msg: "That password reset link is invalid or has expired.",
       });
@@ -229,7 +230,7 @@ exports.postResetPassword = async (req, res, next) => {
       resetPasswordExpires: { $gt: new Date() },
     }).select("+resetPasswordToken +resetPasswordExpires");
 
-    if (!user) {
+    if (!canIssuePasswordReset(user)) {
       req.flash("errors", {
         msg: "That password reset link is invalid or has expired.",
       });

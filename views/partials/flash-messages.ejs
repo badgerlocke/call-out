@@ -1,6 +1,11 @@
+<%
+  const flashMessages = locals.messages || {};
+  const flashErrors = [].concat(flashMessages.errors || [], flashMessages.error || []);
+%>
 <% ['errors', 'info', 'success'].forEach(type => { %>
-  <% if (locals.messages && Array.isArray(messages[type])) { %>
-    <% messages[type].forEach(message => { %>
+  <% const items = type === 'errors' ? flashErrors : flashMessages[type]; %>
+  <% if (Array.isArray(items)) { %>
+    <% items.forEach(message => { %>
       <div
         class="alert mb-3 <%= type === 'errors' ? 'alert-error' : type === 'success' ? 'alert-success' : 'alert-info' %>"
         role="<%= type === 'errors' ? 'alert' : 'status' %>"

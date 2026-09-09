@@ -14,7 +14,11 @@ const {
   addDefaultFriend,
   backfillDefaultFriendships,
 } = require("../utils/default-friend");
-const { wouldRemoveLastAdmin } = require("../controllers/admin");
+const {
+  ACCOUNT_LIST_SORT,
+  wouldRemoveLastAdmin,
+} = require("../controllers/admin");
+const { resolveAdminUserName } = require("../scripts/bootstrap-admin");
 
 const A = "507f1f77bcf86cd799439011";
 const B = "507f1f77bcf86cd799439012";
@@ -29,6 +33,32 @@ function responseRecorder() {
     },
   };
 }
+
+test("account list sorts admin before user so admins stay in the first page", () => {
+  assert.deepEqual(ACCOUNT_LIST_SORT, { role: 1, userName: 1 });
+  assert.ok("admin" < "user");
+});
+
+test("bootstrap admin requires an explicit username", () => {
+  assert.equal(
+    resolveAdminUserName(["node", "scripts/bootstrap-admin.js", "@Ada"], {}),
+    "ada"
+  );
+  assert.equal(
+    resolveAdminUserName(["node", "scripts/bootstrap-admin.js"], {
+      ADMIN_USERNAME: "ada",
+      DEFAULT_FRIEND_USERNAME: "badgerlocke",
+    }),
+    "ada"
+  );
+  assert.throws(
+    () =>
+      resolveAdminUserName(["node", "scripts/bootstrap-admin.js"], {
+        DEFAULT_FRIEND_USERNAME: "badgerlocke",
+      }),
+    /adminUsername/
+  );
+});
 
 test("new users default to a normal active role", () => {
   const user = new User({

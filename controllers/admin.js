@@ -7,6 +7,7 @@ const { plainText } = require("../utils/html");
 const { escapeRegex } = require("../utils/username");
 
 const RESULT_LIMIT = 100;
+const ACCOUNT_LIST_SORT = { role: 1, userName: 1 };
 
 function sessionsCollection() {
   return mongoose.connection.collection("sessions");
@@ -37,7 +38,7 @@ exports.getDashboard = async (req, res, next) => {
 
     const [users, trips, userCount, tripCount] = await Promise.all([
       User.find(userFilter)
-        .sort({ role: -1, userName: 1 })
+        .sort(ACCOUNT_LIST_SORT)
         .limit(RESULT_LIMIT)
         .lean(),
       Trip.find(tripFilter)
@@ -151,4 +152,5 @@ exports.deleteTrip = async (req, res, next) => {
   }
 };
 
+exports.ACCOUNT_LIST_SORT = ACCOUNT_LIST_SORT;
 exports.wouldRemoveLastAdmin = wouldRemoveLastAdmin;
